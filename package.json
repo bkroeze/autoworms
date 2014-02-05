@@ -1,7 +1,7 @@
 {
   "name": "squirms",
-  "description": "The Squirms web game"
-  "author": "Bruce Kroeze"
+  "description": "The Squirms web game",
+  "author": "Bruce Kroeze",
   "dependencies": {
     "grunt": "0.x.x",
     "grunt-autoprefixer": "0.2.x",
@@ -15,7 +15,7 @@
     "grunt-contrib-uglify": "0.2.x",
     "grunt-contrib-watch": "0.5.x",
     "grunt-express": "~1.2.x",
-    "load-grunt-tasks": "~0.2.1",
+    "load-grunt-tasks": "~0.2.1"
   },
   "engine": "node >= 0.10"
 }
