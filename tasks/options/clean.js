@@ -9,6 +9,6 @@ module.exports = {
     src: [ 'build/**/*.css', '!build/styles/application.css' ]
   },
   scripts: {
-    src: [ 'build/**/*.js', '!build/scripts/application.js' ]
+    src: [ 'build/**/*.js', '!build/scripts/application.js', '!build/server/**/*.js' ]
   }
 };

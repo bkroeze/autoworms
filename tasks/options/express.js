@@ -7,8 +7,8 @@ module.exports = {
     options: {
       port: '<%= globalConfig.uniquePort  || 9000%>',
       hostname: '*',
-      server: 'build',
-      bases: ['.tmp','app'],
+      server: 'build/server/main',
+      bases: ['build'],
       livereload: true
       // serverreload: true
       // showStack: true

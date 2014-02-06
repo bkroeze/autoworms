@@ -4,6 +4,7 @@ module.exports = (grunt) ->
     "coffeelint"
     "clean"
     "coffee:dev"
+    "coffee:server"
     "jade:dev"
     "compass"
     "autoprefixer"

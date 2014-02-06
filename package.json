@@ -19,6 +19,7 @@
   },
   "engine": "node >= 0.10",
   "devDependencies": {
-    "grunt-coffeelint": "0.0.8"
+    "grunt-coffeelint": "0.0.8",
+    "express": "~3.4.8"
   }
 }
