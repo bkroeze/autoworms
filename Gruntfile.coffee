@@ -1,17 +1,5 @@
-# global module:true, process:true, console:true 
+# global module:true, process:true, console:true
 module.exports = (grunt) ->
-  
-  # Load grunt tasks in NPM that start with grunt-
-  
-  # Load grunt tasks in NPM that don't start with grunt-
-  # grunt.loadNpmTasks('intern-geezer');
-  # Load grunt tasks in project (including experiences generator)
-  # BJK: please define all tasks in the tasks directory instead of doing them directly here
-  
-  # BJK: To add new sections to the config, just make a file in tasks/options
-  # and it will auto-include via the code below.  This is much cleaner and easier.
-  
-  # load all configs found in tasks/options
   loadConfig = (path) ->
     glob = require("glob")
     object = {}

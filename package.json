@@ -17,5 +17,8 @@
     "grunt-express": "~1.2.x",
     "load-grunt-tasks": "~0.2.1"
   },
-  "engine": "node >= 0.10"
+  "engine": "node >= 0.10",
+  "devDependencies": {
+    "grunt-coffeelint": "0.0.8"
+  }
 }
