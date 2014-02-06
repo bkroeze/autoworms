@@ -11,6 +11,7 @@ module.exports = (grunt) ->
     "copy:buildhtml"
     "clean:buildhtml"
     "express:dev"
+    'open:dev'
     'watch'
   ]
   return
