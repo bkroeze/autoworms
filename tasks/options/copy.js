@@ -4,5 +4,11 @@ module.exports = {
     src: [ '**', '!**/*.scss', '!**/*.coffee', '!**/*.jade' ],
     dest: 'build',
     expand: true
+  },
+  buildhtml: {
+    cwd: 'build/templates',
+    src: ['**/*.html'],
+    dest: 'build',
+    expand: true
   }
 };

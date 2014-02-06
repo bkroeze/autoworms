@@ -1,7 +1,7 @@
 module.exports = {
   build: {
     files: {
-      'build/application.css': [ 'build/**/*.css' ]
+      'build/styles/application.css': [ 'build/**/*.css' ]
     }
   }
 };

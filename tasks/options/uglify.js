@@ -4,7 +4,7 @@ module.exports = {
       mangle: false
     },
     files: {
-      'build/application.js': [ 'build/**/*.js' ]
+      'build/scripts/application.js': [ 'build/**/*.js' ]
     }
   }
 };

@@ -1,0 +1,30 @@
+doctype html
+html(lang='en')
+  head
+    block title
+      title AutoWorms
+
+    block styles
+      if debug
+        link(href='styles/main.css', media='screen', rel='stylesheet')
+      else
+        link(href='styles/application.css', media='screen', rel='stylesheet')
+
+    block jsHead
+      # scripts here
+  body
+    block header
+      #header
+        p header
+
+    block body
+      #body
+        p body
+
+    block footer
+      #foot
+        p footer
+
+    block jsFoot
+
+

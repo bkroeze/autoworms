@@ -1,11 +1,28 @@
 module.exports = {
-  compile: {
+  dev: {
     options: {
-      data: {}
+      pretty: true,
+      data: {
+        debug: true
+      }
     },
     files: [{
       expand: true,
-      cwd: 'source',
+      cwd: 'app',
+      src: [ '**/*.jade' ],
+      dest: 'build',
+      ext: '.html'
+    }]
+  },
+  prod: {
+    options: {
+      data: {
+        debug: false
+      }
+    },
+    files: [{
+      expand: true,
+      cwd: 'app',
       src: [ '**/*.jade' ],
       dest: 'build',
       ext: '.html'

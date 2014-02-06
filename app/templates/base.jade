@@ -1,0 +1,15 @@
+extends root
+
+block title
+  AutoWorms - Home
+
+block jsFoot
+  if debug
+    script(type='text/javascript', src='scripts/app.js')
+  else
+    script(type='text/javascript', src='scripts/application.js')
+
+
+block body
+    #body.base
+    p base body

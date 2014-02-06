@@ -2,10 +2,13 @@ module.exports = {
   build: {
     src: [ 'build' ]
   },
+  buildhtml: {
+    src: [ 'build/templates' ]
+  },
   stylesheets: {
-    src: [ 'build/**/*.css', '!build/application.css' ]
+    src: [ 'build/**/*.css', '!build/styles/application.css' ]
   },
   scripts: {
-    src: [ 'build/**/*.js', '!build/application.js' ]
+    src: [ 'build/**/*.js', '!build/scripts/application.js' ]
   }
 };
