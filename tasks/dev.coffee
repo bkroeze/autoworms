@@ -10,5 +10,7 @@ module.exports = (grunt) ->
     "autoprefixer"
     "copy:buildhtml"
     "clean:buildhtml"
+    "express:dev"
+    'watch'
   ]
   return

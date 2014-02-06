@@ -11,7 +11,8 @@ module.exports = {
       hostname: '*',
       server: path.resolve('./build/server/main'),
       bases: ['build'],
-      livereload: true
+      livereload: true,
+      background: false
       // serverreload: true
       // showStack: true
     }
