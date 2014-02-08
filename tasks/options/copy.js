@@ -10,5 +10,17 @@ module.exports = {
     src: ['**/*.html'],
     dest: 'build',
     expand: true
+  },
+  dev: {
+    cwd: 'app',
+    src: [ '**', '**/*js', '!**/*.scss', '!**/*.jade' ],
+    dest: 'build',
+    expand: true
+  },
+  devfix: {
+    expand: true,
+    cwd: 'app',
+    src: ['**/app.coffee'],
+    dest: 'build/app'
   }
 };

@@ -1,6 +1,6 @@
 {
-  "name": "squirms",
-  "description": "The Squirms web game",
+  "name": "Autoworms",
+  "description": "The Autoworms web game",
   "author": "Bruce Kroeze",
   "dependencies": {
     "grunt": "0.x.x",
@@ -21,6 +21,8 @@
   "devDependencies": {
     "grunt-coffeelint": "0.0.8",
     "express": "~3.4.8",
-    "grunt-open": "~0.2.3"
+    "grunt-open": "~0.2.3",
+    "grunt-ngmin": "0.0.3",
+    "glob": "~3.2.8"
   }
 }

@@ -5,13 +5,15 @@ module.exports = (grunt) ->
     "clean"
     "coffee:dev"
     "coffee:server"
+    "copy:dev"
+    "copy:devfix"
     "jade:dev"
     "compass"
     "autoprefixer"
     "copy:buildhtml"
-    "clean:buildhtml"
+    # "clean:buildhtml"
     "express:dev"
-    'open:dev'
+    # 'open:dev'
     'watch'
   ]
   return

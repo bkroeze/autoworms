@@ -5,11 +5,15 @@ block title
 
 block jsFoot
   if debug
+    script(type='text/javascript', src='scripts/vendor/log4javascript.js')
+    script(type='text/javascript', src='scripts/vendor/angular.js')
+    script(type='text/javascript', src='scripts/services/logger.js')
+    script(type='text/javascript', src='scripts/hex/hex.js')
     script(type='text/javascript', src='scripts/app.js')
   else
     script(type='text/javascript', src='scripts/application.js')
 
 
-block body
-    #body.base
-    p base body
+block bodyContent
+    #content(ng-app='autoworms')
+        p base body
