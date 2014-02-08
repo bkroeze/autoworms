@@ -1,1 +1,1 @@
-angular.module('autoworms', ['logger', 'hextools'])
+angular.module('autoworms', ['utils.logger', 'hextools'])

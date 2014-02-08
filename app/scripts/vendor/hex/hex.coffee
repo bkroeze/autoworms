@@ -4,8 +4,10 @@
   https://github.com/mpalmerlee/HexagonTools
 
 ###
-angular.module('hextools', []).service 'hex', ->
+angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
+  log = logger('hextools');
+  log.debug('hextools!')
   # ------------------------
   # Hex calculations
   # ------------------------
@@ -347,57 +349,62 @@ angular.module('hextools', []).service 'hex', ->
           else
             h.PathCoOrdX = coOrd2++
 
-  GetHexId: (row, col) ->
-    letterIndex = row
-    letters = ""
-    while letterIndex > 25
-      letters = Grid.Static.Letters[letterIndex % 26] + letters
-      letterIndex -= 26
-    Grid.Static.Letters[letterIndex] + letters + (col + 1)
-  
-  
-  ###
-  Returns a hex at a given point
-  @this {Grid}
-  @return {Hexagon}
-  ###
-  GetHexAt: (p) -> #Point
-  
-    #find the hex that contains this point
-    for h of @Hexes
-      return @Hexes[h]  if @Hexes[h].Contains(p)
-    null
-  
-  
-  ###
-  Returns a distance between two hexes
-  @this {Grid}
-  @return {number}
-  ###
-  GetHexDistance: (h1, h2) -> #Hexagon
-  #Hexagon
-  
-    #a good explanation of this calc can be found here:
-    #http://playtechs.blogspot.com/2007/04/hex-grids.html
-    deltaX = h1.PathCoOrdX - h2.PathCoOrdX
-    deltaY = h1.PathCoOrdY - h2.PathCoOrdY
-    (Math.abs(deltaX) + Math.abs(deltaY) + Math.abs(deltaX - deltaY)) / 2
-  
-  
-  ###
-  Gets a hex by its ID
-  @this {Grid}
-  @return {Hexagon}
-  ###
-  GetHexById: (id) ->
-    for i of @Hexes
-      return @Hexes[i]  if @Hexes[i].Id is id
-    null
+    GetHexId: (row, col) ->
+      letterIndex = row
+      letters = ""
+      while letterIndex > 25
+        letters = Grid.Static.Letters[letterIndex % 26] + letters
+        letterIndex -= 26
+      Grid.Static.Letters[letterIndex] + letters + (col + 1)
+
+
+    ###
+    Returns a hex at a given point
+    @this {Grid}
+    @return {Hexagon}
+    ###
+    GetHexAt: (p) -> #Point
+
+      #find the hex that contains this point
+      for h of @Hexes
+        return @Hexes[h]  if @Hexes[h].Contains(p)
+      null
+
+
+    ###
+    Returns a distance between two hexes
+    @this {Grid}
+    @return {number}
+    ###
+    GetHexDistance: (h1, h2) -> #Hexagon
+    #Hexagon
+
+      #a good explanation of this calc can be found here:
+      #http://playtechs.blogspot.com/2007/04/hex-grids.html
+      deltaX = h1.PathCoOrdX - h2.PathCoOrdX
+      deltaY = h1.PathCoOrdY - h2.PathCoOrdY
+      (Math.abs(deltaX) + Math.abs(deltaY) + Math.abs(deltaX - deltaY)) / 2
+
+
+    ###
+    Gets a hex by its ID
+    @this {Grid}
+    @return {Hexagon}
+    ###
+    GetHexById: (id) ->
+      for i of @Hexes
+        return @Hexes[i]  if @Hexes[i].Id is id
+      null
 
   Grid.Static = Letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
   return {
     Grid: Grid,
     Hexagon: Hexagon,
-    Point: Point
+    Point: Point,
+    debugHexZR: debugHexZR
+    debugHexWH: debugHexWH
+    changeOrientation: changeOrientation
+    getHexGridZR: getHexGridZR
+    getHexGridWH: getHexGridWH
   }

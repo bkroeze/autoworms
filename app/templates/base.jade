@@ -5,15 +5,13 @@ block title
 
 block jsFoot
   if debug
-    script(type='text/javascript', src='scripts/vendor/log4javascript.js')
     script(type='text/javascript', src='scripts/vendor/angular.js')
-    script(type='text/javascript', src='scripts/services/logger.js')
-    script(type='text/javascript', src='scripts/hex/hex.js')
+    script(type='text/javascript', src='scripts/vendor/utils/log4javascript.js')
+    script(type='text/javascript', src='scripts/vendor/utils/utils.js')
+    script(type='text/javascript', src='scripts/vendor/utils/services/logger.js')
+    script(type='text/javascript', src='scripts/vendor/hex/hex.js')
     script(type='text/javascript', src='scripts/app.js')
+    script(type='text/javascript', src='scripts/controllers/game.js')
   else
     script(type='text/javascript', src='scripts/application.js')
 
-
-block bodyContent
-    #content(ng-app='autoworms')
-        p base body

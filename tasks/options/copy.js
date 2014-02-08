@@ -13,14 +13,14 @@ module.exports = {
   },
   dev: {
     cwd: 'app',
-    src: [ '**', '**/*js', '!**/*.scss', '!**/*.jade' ],
+    src: [ '**', '**/*.coffee', '**/*js', '!**/*.scss', '!**/*.jade' ],
     dest: 'build',
     expand: true
   },
   devfix: {
     expand: true,
     cwd: 'app',
-    src: ['**/app.coffee'],
+    src: ['**/*.coffee'],
     dest: 'build/app'
   }
 };

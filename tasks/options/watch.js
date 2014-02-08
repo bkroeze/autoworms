@@ -1,18 +1,10 @@
 module.exports = {
-  stylesheets: {
-    files: 'app/**/*.scss',
-        tasks: [ 'stylesheets' ]
+  prod: {
+    files: ['app/**/*.scss', 'app/**/*.coffee', 'app/**/*.jade'],
+    tasks: ['stylesheets', 'scripts', 'jade', 'copy']
   },
-  scripts: {
-    files: 'app/**/*.coffee',
-        tasks: [ 'scripts' ]
-  },
-  jade: {
-    files: 'app/**/*.jade',
-        tasks: [ 'jade' ]
-  },
-  copy: {
-    files: [ 'app/**', '!app/**/*.scss', '!app/**/*.coffee', '!app/**/*.jade' ],
-        tasks: [ 'copy' ]
+  dev: {
+    files: ['app/**/*.scss', 'app/**/*.coffee', 'app/**/*.jade'],
+    tasks: ['dev']
   }
 };
