@@ -164,60 +164,70 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
         ctx.strokeStyle = "grey"
       else
         ctx.strokeStyle = "black"
-      ctx.lineWidth = 1
-      ctx.beginPath()
-      log.debug @points
-      ctx.moveTo @points[0].x, @points[0].y
-      i = 1
 
-      while i < @points.length
-        p = @points[i]
-        ctx.lineTo p.x, p.y
-        i++
-      ctx.closePath()
-      ctx.stroke()
-      if @id
-
-        #draw text for debugging
+      if Hexagon.Static.CENTERPOINT
+        log.debug('Center drawing')
         ctx.fillStyle = "black"
-        ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
-        ctx.textAlign = "center"
-        ctx.textBaseline = "middle"
-
-        #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
-        ctx.fillText @id, @midPoint.x, @midPoint.y
-      if @PathCoOrdX isnt null and @PathCoOrdY isnt null and typeof (@PathCoOrdX) isnt "undefined" and typeof (@PathCoOrdY) isnt "undefined"
-
-        #draw co-ordinates for debugging
-        ctx.fillStyle = "black"
-        ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
-        ctx.textAlign = "center"
-        ctx.textBaseline = "middle"
-
-        #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
-        ctx.fillText "(" + @PathCoOrdX + "," + @PathCoOrdY + ")", @midPoint.x, @midPoint.y + 10
-      if Hexagon.Static.DRAWSTATS
-        ctx.strokeStyle = "black"
-        ctx.lineWidth = 2
-
-        #draw our x1, y1, and z
         ctx.beginPath()
-        ctx.moveTo @p1.x, @y
-        ctx.lineTo @p1.x, @p1.y
-        ctx.lineTo @x, @p1.y
+        ctx.moveTo @midPoint.x + 2, @midPoint.y
+        ctx.arc(@midPoint.x, @midPoint.y, 2, 0, 2 * Math.PI, false)
         ctx.closePath()
         ctx.stroke()
-        ctx.fillStyle = "black"
-        ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
-        ctx.textAlign = "left"
-        ctx.textBaseline = "middle"
+      else
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        log.debug @points
+        ctx.moveTo @points[0].x, @points[0].y
+        i = 1
 
-        #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
-        ctx.fillText "z", @x + @x1 / 2 - 8, @y + @y1 / 2
-        ctx.fillText "x", @x + @x1 / 2, @p1.y + 10
-        ctx.fillText "y", @p1.x + 2, @y + @y1 / 2
-        ctx.fillText "z = " + Hexagon.Static.SIDE, @p1.x, @p1.y + @y1 + 10
-        ctx.fillText "(" + @x1.toFixed(2) + "," + @y1.toFixed(2) + ")", @p1.x, @p1.y + 10
+        while i < @points.length
+          p = @points[i]
+          ctx.lineTo p.x, p.y
+          i++
+        ctx.closePath()
+        ctx.stroke()
+
+        if @id
+          #draw text for debugging
+          ctx.fillStyle = "black"
+          ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
+          ctx.textAlign = "center"
+          ctx.textBaseline = "middle"
+
+          #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
+          ctx.fillText @id, @midPoint.x, @midPoint.y
+        if @PathCoordX isnt null and @PathCoordY isnt null and typeof (@PathCoordX) isnt "undefined" and typeof (@PathCoordY) isnt "undefined"
+
+          #draw co-ordinates for debugging
+          ctx.fillStyle = "black"
+          ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
+          ctx.textAlign = "center"
+          ctx.textBaseline = "middle"
+
+          #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
+          ctx.fillText "(" + @PathCoordX + "," + @PathCoordY + ")", @midPoint.x, @midPoint.y + 10
+        if Hexagon.Static.DRAWSTATS
+          ctx.strokeStyle = "black"
+          ctx.lineWidth = 2
+
+          #draw our x1, y1, and z
+          ctx.beginPath()
+          ctx.moveTo @p1.x, @y
+          ctx.lineTo @p1.x, @p1.y
+          ctx.lineTo @x, @p1.y
+          ctx.closePath()
+          ctx.stroke()
+          ctx.fillStyle = "black"
+          ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
+          ctx.textAlign = "left"
+          ctx.textBaseline = "middle"
+
+          #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
+          ctx.fillText "z", @x + @x1 / 2 - 8, @y + @y1 / 2
+          ctx.fillText "x", @x + @x1 / 2, @p1.y + 10
+          ctx.fillText "y", @p1.x + 2, @y + @y1 / 2
+          ctx.fillText "z = " + Hexagon.Static.SIDE, @p1.x, @p1.y + @y1 + 10
+          ctx.fillText "(" + @x1.toFixed(2) + "," + @y1.toFixed(2) + ")", @p1.x, @p1.y + 10
       return
 
 
@@ -280,6 +290,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     SIDE: 50.0
     ORIENTATION: Hexagon.Orientation.Normal
     DRAWSTATS: false #hexagons will have 25 unit sides for now
+    CENTERPOINT: true
 
   # --------------------------------
   # Grid stuff
@@ -316,9 +327,9 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           h = new Hexagon(hexId, x, y)
           pathCoOrd = col
           if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
-            h.PathCoOrdX = col #the column is the x coordinate of the hex, for the y coordinate we need to get more fancy
+            h.PathCoordX = col #the column is the x coordinate of the hex, for the y coordinate we need to get more fancy
           else
-            h.PathCoOrdY = row
+            h.PathCoordY = row
             pathCoOrd = row
           @hexes.push h
           HexagonsByXOrYCoOrd[pathCoOrd] = []  unless HexagonsByXOrYCoOrd[pathCoOrd]
@@ -335,15 +346,15 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           y += (Hexagon.Static.HEIGHT - Hexagon.Static.SIDE) / 2 + Hexagon.Static.SIDE
 
       #finally go through our list of hexagons by their x co-ordinate to assign the y co-ordinate
-      for coOrd1 of HexagonsByXOrYCoOrd
-        hexagonsByXOrY = HexagonsByXOrYCoOrd[coOrd1]
-        coOrd2 = Math.floor(coOrd1 / 2) + (coOrd1 % 2)
+      for coord1 of HexagonsByXOrYCoOrd
+        hexagonsByXOrY = HexagonsByXOrYCoOrd[coord1]
+        coord2 = Math.floor(coord1 / 2) + (coord1 % 2)
         for i of hexagonsByXOrY
           h = hexagonsByXOrY[i] #Hexagon
           if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
-            h.PathCoOrdY = coOrd2++
+            h.PathCoordY = coord2++
           else
-            h.PathCoOrdX = coOrd2++
+            h.PathCoordX = coord2++
 
     getHexId: (row, col) ->
       letterIndex = row
@@ -377,8 +388,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
       #a good explanation of this calc can be found here:
       #http://playtechs.blogspot.com/2007/04/hex-grids.html
-      deltaX = h1.PathCoOrdX - h2.PathCoOrdX
-      deltaY = h1.PathCoOrdY - h2.PathCoOrdY
+      deltaX = h1.PathCoordX - h2.PathCoordX
+      deltaY = h1.PathCoordY - h2.PathCoordY
       (Math.abs(deltaX) + Math.abs(deltaY) + Math.abs(deltaX - deltaY)) / 2
 
 
