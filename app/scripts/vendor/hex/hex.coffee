@@ -66,18 +66,12 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     drawHexGrid(canvas)
     return
 
-  debugHexZR = (canvas) ->
-    z = parseFloat(document.getElementById("sideLength").value)
-    r = parseFloat(document.getElementById("whRatio").value)
-
+  debugHexZR = (z, r, canvas) ->
     findHexWithSideLengthZAndRatio(z, r)
     addHexToCanvasAndDraw 20, 20, canvas
     return
 
-  debugHexWH = (canvas) ->
-    width = parseFloat(document.getElementById("hexWidth").value)
-    height = parseFloat(document.getElementById("hexHeight").value)
-
+  debugHexWH = (width, height, canvas) ->
     findHexWithWidthAndHeight()
     addHexToCanvasAndDraw 20, 20, canvas
     return

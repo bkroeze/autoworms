@@ -2,12 +2,24 @@ angular.module('autoworms').controller 'game', ($scope, logger, hex) ->
   log = logger 'game controller'
   log.debug 'started up'
 
-  $scope.debugHexWH = hex.debugHexWH
-  $scope.debugHexZR = hex.debugHexZR
+  # $scope.debugHexWH = hex.debugHexWH
+  # $scope.debugHexZR = hex.debugHexZR
   # $scope.getHexGridZR = hex.getHexGridZR
-  $scope.getHexGridWH = hex.getHexGridWH
+  # $scope.getHexGridWH = hex.getHexGridWH
 
   $scope.changeOrientation = hex.changeOrientation
+
+  $scope.buildDebugHexGridWH = ->
+    width = parseFloat(document.getElementById("hexWidth").value)
+    height = parseFloat(document.getElementById("hexHeight").value)
+    canvas = document.getElementById('hexCanvas')
+    hex.debugHexGridWH(width, height, canvas)
+
+  $scope.buildDebugHexGridZR = ->
+    z = parseFloat(document.getElementById("sideLength").value)
+    r = parseFloat(document.getElementById("whRatio").value)
+    canvas = document.getElementById('hexCanvas')
+    hex.debugHexGridZR(z, r, canvas)
 
   $scope.buildHexGridZR = ->
     z = parseFloat(document.getElementById("sideLength").value)
