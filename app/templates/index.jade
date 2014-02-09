@@ -10,30 +10,8 @@ block header
 block bodyContent
   #content(ng-app='autoworms')
     .index(ng-controller='game')
-      h3 Orientation
-      p
-        input(
-          type="button",
-          ng-click="changeOrientation();"
-          value="Change Orientation")
-      h3 Hex Based on Side Length
-      p Side Length (z):
-        input(type="text", id="sideLength", value="50.0")
-      p
-        | Ratio of Width:Height (4:3, r = 1.333), (2/&radic;
-        span(style="text-decoration:overline;") 3
-        | , r = 1.1547...)
-        input(type="text", id="whRatio", value="1.1547005383792515290182975610039")
-      p
-        input(type="button", ng-click="buildHexGridZR()", value="Draw Hex Grid by Side Length Z")
-      h3
-        Hex Based on Width and Height
-        | Width:
-        input(type="text", id="hexWidth", value="100.0")
-      p
-        | Height:
-        input(type="text", id="hexHeight", value="86.60254037844388")
-      p
-        input(type="button", ng-click="buildHexGridWH()", value="Draw Hex Grid by Width and Height")
-      #hexStatus
-      canvas(id="hexCanvas", width="800", height="600", style="width:800px;height:600px")
+      canvas(id="wormsCanvas", width="800", height="600", style="width:800px;height:600px")
+
+block footer
+  // pass
+    

@@ -1,4 +1,4 @@
-angular.module('autoworms').controller 'game', ($scope, logger, hex) ->
+angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex) ->
   log = logger 'game controller'
   log.debug 'started up'
 
@@ -32,5 +32,17 @@ angular.module('autoworms').controller 'game', ($scope, logger, hex) ->
     height = parseFloat(document.getElementById("hexHeight").value)
     canvas = document.getElementById('hexCanvas')
     hex.getHexGridWH(width, height, canvas)
+
+  maybeStart = ->
+    log.debug 'checking for start'
+    canvas = document.getElementById 'wormsCanvas'
+    if canvas
+      log.debug 'starting'
+      hex.getHexGridWH 50, 65, canvas
+    else
+      log.debug 'deferring start ...'
+      $timeout maybeStart, 500
+
+  maybeStart()
 
   log.debug 'ready'

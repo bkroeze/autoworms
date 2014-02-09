@@ -353,9 +353,9 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       letterIndex = row
       letters = ""
       while letterIndex > 25
-        letters = Grid.Static.Letters[letterIndex % 26] + letters
+        letters = @config.letters[letterIndex % 26] + letters
         letterIndex -= 26
-      Grid.Static.Letters[letterIndex] + letters + (col + 1)
+      @config.letters[letterIndex] + letters + (col + 1)
 
 
     ###
@@ -396,7 +396,6 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
         return @hexes[i]  if @hexes[i].id is id
       null
 
-  Grid.Static = Letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
   ###
   Simple configuration object
