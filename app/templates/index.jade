@@ -13,22 +13,9 @@ block bodyContent
       h3 Orientation
       p
         input(
-          type="radio",
-          name="hexOrientation",
-          id="hexOrientationNormal",
-          value="0",
-          ng-model='orientation',
-          ng-change="changeOrientation();",
-          checked="true")
-        label(for="hexOrientationNormal") Normal
-        input(
-          type="radio",
-          name="hexOrientation",
-          id="hexOrientationRotated",
-          value="1",
-          ng-model='orientation',
-          ng-change="changeOrientation();")
-        label(for="hexOrientationRotated") Rotated
+          type="button",
+          ng-click="changeOrientation();"
+          value="Change Orientation")
       h3 Hex Based on Side Length
       p Side Length (z):
         input(type="text", id="sideLength", value="50.0")

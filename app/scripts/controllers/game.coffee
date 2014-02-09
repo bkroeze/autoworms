@@ -7,4 +7,6 @@ angular.module('autoworms').controller 'game', ($scope, logger, hex) ->
   $scope.getHexGridZR = hex.getHexGridZR
   $scope.getHexGridWH = hex.getHexGridWH
 
+  $scope.changeOrientation = hex.changeOrientation
+
   log.debug 'ready'

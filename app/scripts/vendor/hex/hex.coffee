@@ -70,10 +70,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     return
 
   changeOrientation = ->
-    if document.getElementById("hexOrientationNormal").checked
-      Hexagon.Static.ORIENTATION = Hexagon.Orientation.Normal
-    else
-      Hexagon.Static.ORIENTATION = Hexagon.Orientation.Rotated
+    Hexagon.Static.ORIENTATION = !Hexagon.orientation
     drawHexGrid()
     return
 
@@ -274,8 +271,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       isIn
 
   Hexagon.Orientation =
-    Normal: 0
-    Rotated: 1
+    Normal: true
+    Rotated: false
 
   Hexagon.Static =
     HEIGHT: 91.14378277661477
@@ -406,4 +403,5 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     changeOrientation: changeOrientation
     getHexGridZR: getHexGridZR
     getHexGridWH: getHexGridWH
+    changeOrientation: changeOrientation
   }
