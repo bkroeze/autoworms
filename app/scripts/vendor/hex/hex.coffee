@@ -55,8 +55,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     canvas = document.getElementById("hexCanvas")
     ctx = canvas.getContext("2d")
     ctx.clearRect 0, 0, 800, 600
-    for h of grid.Hexes
-      grid.Hexes[h].draw ctx
+    for h of grid.hexes
+      grid.hexes[h].draw ctx
     return
 
   getHexGridZR = ->
@@ -106,58 +106,55 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
   @constructor
   ###
   class Point
-    constructor: (@X, @Y) ->
+    constructor: (@x, @y) ->
 
   ###
   A Rectangle is x and y origin and width and height
   @constructor
   ###
   class Rectangle
-    constructor: (@X, @Y, @Width, @Height) ->
+    constructor: (@x, @y, @width, @height) ->
 
   ###
   A Line is x and y start and x and y end
   @constructor
   ###
   class Line
-    constructor: (@X1, @Y1, @X2, @Y2) ->
+    constructor: (@x1, @y1, @x2, @y2) ->
 
   ###
   A Hexagon is a 6 sided polygon, our hexes don't have to be symmetrical, i.e. ratio of width to height could be 4 to 3
   @constructor
   ###
   class Hexagon
-    constructor: (id, x, y) ->
-      @Points = [] #Polygon Base
+    constructor: (@id, @x, @y) ->
+      @points = [] #Polygon Base
       x1 = null
       y1 = null
       if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
         x1 = (Hexagon.Static.WIDTH - Hexagon.Static.SIDE) / 2
         y1 = (Hexagon.Static.HEIGHT / 2)
-        @Points.push new Point(x1 + x, y)
-        @Points.push new Point(x1 + Hexagon.Static.SIDE + x, y)
-        @Points.push new Point(Hexagon.Static.WIDTH + x, y1 + y)
-        @Points.push new Point(x1 + Hexagon.Static.SIDE + x, Hexagon.Static.HEIGHT + y)
-        @Points.push new Point(x1 + x, Hexagon.Static.HEIGHT + y)
-        @Points.push new Point(x, y1 + y)
+        @points.push new Point(x1 + x, y)
+        @points.push new Point(x1 + Hexagon.Static.SIDE + x, y)
+        @points.push new Point(Hexagon.Static.WIDTH + x, y1 + y)
+        @points.push new Point(x1 + Hexagon.Static.SIDE + x, Hexagon.Static.HEIGHT + y)
+        @points.push new Point(x1 + x, Hexagon.Static.HEIGHT + y)
+        @points.push new Point(x, y1 + y)
       else
         x1 = (Hexagon.Static.WIDTH / 2)
         y1 = (Hexagon.Static.HEIGHT - Hexagon.Static.SIDE) / 2
-        @Points.push new Point(x1 + x, y)
-        @Points.push new Point(Hexagon.Static.WIDTH + x, y1 + y)
-        @Points.push new Point(Hexagon.Static.WIDTH + x, y1 + Hexagon.Static.SIDE + y)
-        @Points.push new Point(x1 + x, Hexagon.Static.HEIGHT + y)
-        @Points.push new Point(x, y1 + Hexagon.Static.SIDE + y)
-        @Points.push new Point(x, y1 + y)
-      @Id = id
-      @x = x
-      @y = y
+        @points.push new Point(x1 + x, y)
+        @points.push new Point(Hexagon.Static.WIDTH + x, y1 + y)
+        @points.push new Point(Hexagon.Static.WIDTH + x, y1 + Hexagon.Static.SIDE + y)
+        @points.push new Point(x1 + x, Hexagon.Static.HEIGHT + y)
+        @points.push new Point(x, y1 + Hexagon.Static.SIDE + y)
+        @points.push new Point(x, y1 + y)
       @x1 = x1
       @y1 = y1
-      @TopLeftPoint = new Point(@x, @y)
-      @BottomRightPoint = new Point(@x + Hexagon.Static.WIDTH, @y + Hexagon.Static.HEIGHT)
-      @MidPoint = new Point(@x + (Hexagon.Static.WIDTH / 2), @y + (Hexagon.Static.HEIGHT / 2))
-      @P1 = new Point(x + x1, y + y1)
+      @topLeftPoint = new Point(@x, @y)
+      @bottomRightPoint = new Point(@x + Hexagon.Static.WIDTH, @y + Hexagon.Static.HEIGHT)
+      @midPoint = new Point(@x + (Hexagon.Static.WIDTH / 2), @y + (Hexagon.Static.HEIGHT / 2))
+      @p1 = new Point(x + x1, y + y1)
       @selected = false
 
     ###
@@ -165,22 +162,24 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @this {Hexagon}
     ###
     draw: (ctx) ->
+      log.debug('drawing ' + @id)
       unless @selected
         ctx.strokeStyle = "grey"
       else
         ctx.strokeStyle = "black"
       ctx.lineWidth = 1
       ctx.beginPath()
-      ctx.moveTo @Points[0].X, @Points[0].Y
+      log.debug @points
+      ctx.moveTo @points[0].x, @points[0].y
       i = 1
 
-      while i < @Points.length
-        p = @Points[i]
-        ctx.lineTo p.X, p.Y
+      while i < @points.length
+        p = @points[i]
+        ctx.lineTo p.x, p.y
         i++
       ctx.closePath()
       ctx.stroke()
-      if @Id
+      if @id
 
         #draw text for debugging
         ctx.fillStyle = "black"
@@ -189,7 +188,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
         ctx.textBaseline = "middle"
 
         #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
-        ctx.fillText @Id, @MidPoint.X, @MidPoint.Y
+        ctx.fillText @id, @midPoint.x, @midPoint.y
       if @PathCoOrdX isnt null and @PathCoOrdY isnt null and typeof (@PathCoOrdX) isnt "undefined" and typeof (@PathCoOrdY) isnt "undefined"
 
         #draw co-ordinates for debugging
@@ -199,16 +198,16 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
         ctx.textBaseline = "middle"
 
         #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
-        ctx.fillText "(" + @PathCoOrdX + "," + @PathCoOrdY + ")", @MidPoint.X, @MidPoint.Y + 10
+        ctx.fillText "(" + @PathCoOrdX + "," + @PathCoOrdY + ")", @midPoint.x, @midPoint.y + 10
       if Hexagon.Static.DRAWSTATS
         ctx.strokeStyle = "black"
         ctx.lineWidth = 2
 
         #draw our x1, y1, and z
         ctx.beginPath()
-        ctx.moveTo @P1.X, @y
-        ctx.lineTo @P1.X, @P1.Y
-        ctx.lineTo @x, @P1.Y
+        ctx.moveTo @p1.x, @y
+        ctx.lineTo @p1.x, @p1.y
+        ctx.lineTo @x, @p1.y
         ctx.closePath()
         ctx.stroke()
         ctx.fillStyle = "black"
@@ -218,10 +217,10 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
         #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
         ctx.fillText "z", @x + @x1 / 2 - 8, @y + @y1 / 2
-        ctx.fillText "x", @x + @x1 / 2, @P1.Y + 10
-        ctx.fillText "y", @P1.X + 2, @y + @y1 / 2
-        ctx.fillText "z = " + Hexagon.Static.SIDE, @P1.X, @P1.Y + @y1 + 10
-        ctx.fillText "(" + @x1.toFixed(2) + "," + @y1.toFixed(2) + ")", @P1.X, @P1.Y + 10
+        ctx.fillText "x", @x + @x1 / 2, @p1.y + 10
+        ctx.fillText "y", @p1.x + 2, @y + @y1 / 2
+        ctx.fillText "z = " + Hexagon.Static.SIDE, @p1.x, @p1.y + @y1 + 10
+        ctx.fillText "(" + @x1.toFixed(2) + "," + @y1.toFixed(2) + ")", @p1.x, @p1.y + 10
       return
 
 
@@ -231,7 +230,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @return {boolean}
     ###
     isInBounds: (x, y) ->
-      @Contains new Point(x, y)
+      @contains new Point(x, y)
 
     ###
     Returns true if the point is inside this hexagon, it is a quick contains
@@ -240,7 +239,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @return {boolean}
     ###
     isInHexBounds: (p) -> #Point
-      return true if @TopLeftPoint.X < p.X and @TopLeftPoint.Y < p.Y and p.X < @BottomRightPoint.X and p.Y < @BottomRightPoint.Y
+      return true if @topLeftPoint.x < p.x and @topLeftPoint.y < p.y and p.x < @bottomRightPoint.x and p.y < @bottomRightPoint.y
       false
 
 
@@ -254,23 +253,23 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @param {Point} p the test point
     @return {boolean}
     ###
-    Contains: (p) -> #Point
+    contains: (p) -> #Point
       isIn = false
       if @isInHexBounds(p)
 
         #turn our absolute point into a relative point for comparing with the polygon's points
-        #var pRel = new Point(p.X - this.x, p.Y - this.y);
+        #var pRel = new Point(p.x - this.x, p.y - this.y);
         i = undefined
         j = 0
         i = 0
-        j = @Points.length - 1
+        j = @points.length - 1
 
-        while i < @Points.length
-          iP = @Points[i]
-          jP = @Points[j]
+        while i < @points.length
+          iP = @points[i]
+          jP = @points[j]
 
-          #((iP.Y > p.Y) != (jP.Y > p.Y))
-          isIn = not isIn  if (((iP.Y <= p.Y) and (p.Y < jP.Y)) or ((jP.Y <= p.Y) and (p.Y < iP.Y))) and (p.X < (jP.X - iP.X) * (p.Y - iP.Y) / (jP.Y - iP.Y) + iP.X)
+          #((iP.y > p.y) != (jP.y > p.y))
+          isIn = not isIn  if (((iP.y <= p.y) and (p.y < jP.y)) or ((jP.y <= p.y) and (p.y < iP.y))) and (p.x < (jP.x - iP.x) * (p.y - iP.y) / (jP.y - iP.y) + iP.x)
           j = i++
       isIn
 
@@ -299,7 +298,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @height: {double}
     ###
     constructor: (width, height) ->
-      @Hexes = []
+      @hexes = []
 
       #setup a dictionary for use later for assigning the X or Y CoOrd (depending on Orientation)
       HexagonsByXOrYCoOrd = {} #Dictionary<int, List<Hexagon>>
@@ -316,7 +315,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           col = 1
         x = offset
         while x + Hexagon.Static.WIDTH <= width
-          hexId = @GetHexId(row, col)
+          hexId = @getHexId(row, col)
           h = new Hexagon(hexId, x, y)
           pathCoOrd = col
           if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
@@ -324,7 +323,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           else
             h.PathCoOrdY = row
             pathCoOrd = row
-          @Hexes.push h
+          @hexes.push h
           HexagonsByXOrYCoOrd[pathCoOrd] = []  unless HexagonsByXOrYCoOrd[pathCoOrd]
           HexagonsByXOrYCoOrd[pathCoOrd].push h
           col += 2
@@ -349,7 +348,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           else
             h.PathCoOrdX = coOrd2++
 
-    GetHexId: (row, col) ->
+    getHexId: (row, col) ->
       letterIndex = row
       letters = ""
       while letterIndex > 25
@@ -363,11 +362,11 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @this {Grid}
     @return {Hexagon}
     ###
-    GetHexAt: (p) -> #Point
+    getHexAt: (p) -> #Point
 
       #find the hex that contains this point
-      for h of @Hexes
-        return @Hexes[h]  if @Hexes[h].Contains(p)
+      for h of @hexes
+        return @hexes[h]  if @hexes[h].contains(p)
       null
 
 
@@ -376,7 +375,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @this {Grid}
     @return {number}
     ###
-    GetHexDistance: (h1, h2) -> #Hexagon
+    getHexDistance: (h1, h2) -> #Hexagon
     #Hexagon
 
       #a good explanation of this calc can be found here:
@@ -391,9 +390,9 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @this {Grid}
     @return {Hexagon}
     ###
-    GetHexById: (id) ->
-      for i of @Hexes
-        return @Hexes[i]  if @Hexes[i].Id is id
+    getHexById: (id) ->
+      for i of @hexes
+        return @hexes[i]  if @hexes[i].id is id
       null
 
   Grid.Static = Letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
