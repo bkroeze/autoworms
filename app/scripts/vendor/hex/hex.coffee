@@ -12,10 +12,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
   # Hex calculations
   # ------------------------
 
-  findHexWithSideLengthZAndRatio = ->
-    z = parseFloat(document.getElementById("sideLength").value)
-    r = parseFloat(document.getElementById("whRatio").value)
-
+  findHexWithSideLengthZAndRatio = (z, r)->
     #solve quadratic
     r2 = Math.pow(r, 2)
     a = (1 + r2) / r2
@@ -23,18 +20,15 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     c = ((1 - 4.0 * r2) / (4.0 * r2)) * (Math.pow(z, 2))
     x = (-b + Math.sqrt(Math.pow(b, 2) - (4.0 * a * c))) / (2.0 * a)
     y = ((2.0 * x) + z) / (2.0 * r)
-    contentDiv = document.getElementById("hexStatus")
     width = ((2.0 * x) + z)
     height = (2.0 * y)
-    contentDiv.innerHTML = "Values for Hex: <br /><b>Side Length, z:</b> " + z + "<br /><b>x:</b> " + x + "<br /><b>y:</b> " + y + "<br /><b>Width:</b> " + width + "<br /><b>Height: </b>" + height
+    log.debug "Values for Hex: \nSide Length, z: " + z + "\nx:" + x + "\ny: " + y + "\nWidth:" + width + "\nHeight: " + height
     Hexagon.Static.WIDTH = width
     Hexagon.Static.HEIGHT = height
     Hexagon.Static.SIDE = z
     return
 
-  findHexWithWidthAndHeight = ->
-    width = parseFloat(document.getElementById("hexWidth").value)
-    height = parseFloat(document.getElementById("hexHeight").value)
+  findHexWithWidthAndHeight = (width, height) ->
     y = height / 2.0
 
     #solve quadratic
@@ -43,51 +37,54 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     c = (Math.pow(width, 2)) + (Math.pow(height, 2))
     z = (-b - Math.sqrt(Math.pow(b, 2) - (4.0 * a * c))) / (2.0 * a)
     x = (width - z) / 2.0
-    contentDiv = document.getElementById("hexStatus")
-    contentDiv.innerHTML = "Values for Hex: <br /><b>Width:</b> " + width + "<br /><b>Height: </b>" + height + "<br /><b>Side Length, z:</b> " + z + "<br /><b>x:</b> " + x + "<br /><b>y:</b> " + y
+    log.debug "Values for Hex: \nWidth: " + width + "\nHeight: " + height + "\nSide Length, z: " + z + "\nx: " + x + "\ny:" + y
     Hexagon.Static.WIDTH = width
     Hexagon.Static.HEIGHT = height
     Hexagon.Static.SIDE = z
     return
 
-  drawHexGrid = ->
+  drawHexGrid = (canvas) ->
     grid = new Grid(800, 600)
-    canvas = document.getElementById("hexCanvas")
     ctx = canvas.getContext("2d")
     ctx.clearRect 0, 0, 800, 600
     for h of grid.hexes
       grid.hexes[h].draw ctx
     return
 
-  getHexGridZR = ->
-    findHexWithSideLengthZAndRatio()
-    drawHexGrid()
+  getHexGridZR = (z, r, canvas) ->
+    findHexWithSideLengthZAndRatio(z, r)
+    drawHexGrid(canvas)
     return
 
-  getHexGridWH = ->
-    findHexWithWidthAndHeight()
-    drawHexGrid()
+  getHexGridWH = (width, height, canvas) ->
+    findHexWithWidthAndHeight(width, height)
+    drawHexGrid(canvas)
     return
 
-  changeOrientation = ->
+  changeOrientation = (canvas) ->
     Hexagon.Static.ORIENTATION = !Hexagon.orientation
-    drawHexGrid()
+    drawHexGrid(canvas)
     return
 
-  debugHexZR = ->
-    findHexWithSideLengthZAndRatio()
-    addHexToCanvasAndDraw 20, 20
+  debugHexZR = (canvas) ->
+    z = parseFloat(document.getElementById("sideLength").value)
+    r = parseFloat(document.getElementById("whRatio").value)
+
+    findHexWithSideLengthZAndRatio(z, r)
+    addHexToCanvasAndDraw 20, 20, canvas
     return
 
-  debugHexWH = ->
+  debugHexWH = (canvas) ->
+    width = parseFloat(document.getElementById("hexWidth").value)
+    height = parseFloat(document.getElementById("hexHeight").value)
+
     findHexWithWidthAndHeight()
-    addHexToCanvasAndDraw 20, 20
+    addHexToCanvasAndDraw 20, 20, canvas
     return
 
-  addHexToCanvasAndDraw = (x, y) ->
+  addHexToCanvasAndDraw = (x, y, canvas) ->
     Hexagon.Static.DRAWSTATS = true
     hex = new Hexagon(null, x, y)
-    canvas = document.getElementById("hexCanvas")
     ctx = canvas.getContext("2d")
     ctx.clearRect 0, 0, 800, 600
     hex.draw ctx
