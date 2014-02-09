@@ -7,11 +7,17 @@
 angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
   log = logger('hextools');
-  log.debug('hextools!')
+
   # ------------------------
   # Hex calculations
   # ------------------------
 
+  ###
+  Calculates a HexConfig for use in building the grid
+  @param z {Double}
+  @param r {Double}
+  @returns {HexConfig}
+  ###
   findHexWithSideLengthZAndRatio = (z, r)->
     #solve quadratic
     r2 = Math.pow(r, 2)
@@ -22,12 +28,16 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     y = ((2.0 * x) + z) / (2.0 * r)
     width = ((2.0 * x) + z)
     height = (2.0 * y)
-    log.debug "Values for Hex: \nSide Length, z: " + z + "\nx:" + x + "\ny: " + y + "\nWidth:" + width + "\nHeight: " + height
-    Hexagon.Static.WIDTH = width
-    Hexagon.Static.HEIGHT = height
-    Hexagon.Static.SIDE = z
-    return
+    # log.debug "Values for Hex: \nSide Length, z: " + z + "\nx:" + x + "\ny: " + y + "\nWidth:" + width + "\nHeight: " + height
+    new HexConfig(width, height, z)
 
+
+  ###
+  Calculates a HexConfig for use in building the grid
+  @param width {Double}
+  @param height {Double}
+  @returns {HexConfig}
+  ###
   findHexWithWidthAndHeight = (width, height) ->
     y = height / 2.0
 
@@ -37,52 +47,56 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     c = (Math.pow(width, 2)) + (Math.pow(height, 2))
     z = (-b - Math.sqrt(Math.pow(b, 2) - (4.0 * a * c))) / (2.0 * a)
     x = (width - z) / 2.0
-    log.debug "Values for Hex: \nWidth: " + width + "\nHeight: " + height + "\nSide Length, z: " + z + "\nx: " + x + "\ny:" + y
-    Hexagon.Static.WIDTH = width
-    Hexagon.Static.HEIGHT = height
-    Hexagon.Static.SIDE = z
-    return
+    # log.debug "Values for Hex: \nWidth: " + width + "\nHeight: " + height + "\nSide Length, z: " + z + "\nx: " + x + "\ny:" + y
+    new HexConfig(width, height, z)
 
-  drawHexGrid = (canvas) ->
-    grid = new Grid(800, 600)
+
+  ###
+  Draw a hex grid using the specified canvas and configuration
+  @param canvas {Html Canvas}
+  @param hexConfig {HexConfig}
+  @returns {Grid}
+  ###
+  drawHexGrid = (canvas, hexConfig) ->
+    grid = new Grid(800, 600, hexConfig)
     ctx = canvas.getContext("2d")
     ctx.clearRect 0, 0, 800, 600
     for h of grid.hexes
       grid.hexes[h].draw ctx
-    return
+    grid
+
 
   getHexGridZR = (z, r, canvas) ->
-    findHexWithSideLengthZAndRatio(z, r)
-    drawHexGrid(canvas)
-    return
+    config = findHexWithSideLengthZAndRatio(z, r)
+    drawHexGrid(canvas, config)
+
 
   getHexGridWH = (width, height, canvas) ->
-    findHexWithWidthAndHeight(width, height)
-    drawHexGrid(canvas)
-    return
+    config = findHexWithWidthAndHeight(width, height)
+    drawHexGrid(canvas, config)
 
-  changeOrientation = (canvas) ->
-    Hexagon.Static.ORIENTATION = !Hexagon.orientation
-    drawHexGrid(canvas)
-    return
+
+  changeOrientation = (canvas, config) ->
+    config.toggleOrientation()
+    drawHexGrid(canvas, config)
+
 
   debugHexZR = (z, r, canvas) ->
-    findHexWithSideLengthZAndRatio(z, r)
-    addHexToCanvasAndDraw 20, 20, canvas
-    return
+    config = findHexWithSideLengthZAndRatio(z, r)
+    addHexToCanvasAndDraw 20, 20, canvas, config
+
 
   debugHexWH = (width, height, canvas) ->
-    findHexWithWidthAndHeight()
-    addHexToCanvasAndDraw 20, 20, canvas
-    return
+    config = findHexWithWidthAndHeight()
+    addHexToCanvasAndDraw 20, 20, canvas, config
 
-  addHexToCanvasAndDraw = (x, y, canvas) ->
-    Hexagon.Static.DRAWSTATS = true
-    hex = new Hexagon(null, x, y)
+
+  addHexToCanvasAndDraw = (x, y, canvas, config) ->
+    config.drawStats = true
+    hex = new Hexagon(null, x, y, config)
     ctx = canvas.getContext("2d")
     ctx.clearRect 0, 0, 800, 600
-    hex.draw ctx
-    return
+    hex.draw ctx, config
 
 
   # ------------------------
@@ -115,33 +129,33 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
   @constructor
   ###
   class Hexagon
-    constructor: (@id, @x, @y) ->
+    constructor: (@id, @x, @y, @config) ->
       @points = [] #Polygon Base
       x1 = null
       y1 = null
-      if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
-        x1 = (Hexagon.Static.WIDTH - Hexagon.Static.SIDE) / 2
-        y1 = (Hexagon.Static.HEIGHT / 2)
+      if config.normalOrientation
+        x1 = (config.width - config.side) / 2
+        y1 = (config.height / 2)
         @points.push new Point(x1 + x, y)
-        @points.push new Point(x1 + Hexagon.Static.SIDE + x, y)
-        @points.push new Point(Hexagon.Static.WIDTH + x, y1 + y)
-        @points.push new Point(x1 + Hexagon.Static.SIDE + x, Hexagon.Static.HEIGHT + y)
-        @points.push new Point(x1 + x, Hexagon.Static.HEIGHT + y)
+        @points.push new Point(x1 + config.side + x, y)
+        @points.push new Point(config.width + x, y1 + y)
+        @points.push new Point(x1 + config.side + x, config.height + y)
+        @points.push new Point(x1 + x, config.height + y)
         @points.push new Point(x, y1 + y)
       else
-        x1 = (Hexagon.Static.WIDTH / 2)
-        y1 = (Hexagon.Static.HEIGHT - Hexagon.Static.SIDE) / 2
+        x1 = (config.width / 2)
+        y1 = (config.height - config.side) / 2
         @points.push new Point(x1 + x, y)
-        @points.push new Point(Hexagon.Static.WIDTH + x, y1 + y)
-        @points.push new Point(Hexagon.Static.WIDTH + x, y1 + Hexagon.Static.SIDE + y)
-        @points.push new Point(x1 + x, Hexagon.Static.HEIGHT + y)
-        @points.push new Point(x, y1 + Hexagon.Static.SIDE + y)
+        @points.push new Point(config.width + x, y1 + y)
+        @points.push new Point(config.width + x, y1 + config.side + y)
+        @points.push new Point(x1 + x, config.height + y)
+        @points.push new Point(x, y1 + config.side + y)
         @points.push new Point(x, y1 + y)
       @x1 = x1
       @y1 = y1
       @topLeftPoint = new Point(@x, @y)
-      @bottomRightPoint = new Point(@x + Hexagon.Static.WIDTH, @y + Hexagon.Static.HEIGHT)
-      @midPoint = new Point(@x + (Hexagon.Static.WIDTH / 2), @y + (Hexagon.Static.HEIGHT / 2))
+      @bottomRightPoint = new Point(@x + config.width, @y + config.height)
+      @midPoint = new Point(@x + (config.width / 2), @y + (config.height / 2))
       @p1 = new Point(x + x1, y + y1)
       @selected = false
 
@@ -150,14 +164,14 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @this {Hexagon}
     ###
     draw: (ctx) ->
-      log.debug('drawing ' + @id)
+      # log.debug('drawing ' + @id)
       unless @selected
         ctx.strokeStyle = "grey"
       else
         ctx.strokeStyle = "black"
 
-      if Hexagon.Static.CENTERPOINT
-        log.debug('Center drawing')
+      if @config.centerPoint
+        # log.debug('Center drawing')
         ctx.fillStyle = "black"
         ctx.beginPath()
         ctx.moveTo @midPoint.x + 2, @midPoint.y
@@ -197,7 +211,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
           #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
           ctx.fillText "(" + @PathCoordX + "," + @PathCoordY + ")", @midPoint.x, @midPoint.y + 10
-        if Hexagon.Static.DRAWSTATS
+        if @config.drawStats
           ctx.strokeStyle = "black"
           ctx.lineWidth = 2
 
@@ -217,7 +231,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           ctx.fillText "z", @x + @x1 / 2 - 8, @y + @y1 / 2
           ctx.fillText "x", @x + @x1 / 2, @p1.y + 10
           ctx.fillText "y", @p1.x + 2, @y + @y1 / 2
-          ctx.fillText "z = " + Hexagon.Static.SIDE, @p1.x, @p1.y + @y1 + 10
+          ctx.fillText "z = " + config.side, @p1.x, @p1.y + @y1 + 10
           ctx.fillText "(" + @x1.toFixed(2) + "," + @y1.toFixed(2) + ")", @p1.x, @p1.y + 10
       return
 
@@ -271,18 +285,6 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           j = i++
       isIn
 
-  Hexagon.Orientation =
-    Normal: true
-    Rotated: false
-
-  Hexagon.Static =
-    HEIGHT: 91.14378277661477
-    WIDTH: 91.14378277661477
-    SIDE: 50.0
-    ORIENTATION: Hexagon.Orientation.Normal
-    DRAWSTATS: false #hexagons will have 25 unit sides for now
-    CENTERPOINT: true
-
   # --------------------------------
   # Grid stuff
   # --------------------------------
@@ -296,53 +298,53 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @width: {double}
     @height: {double}
     ###
-    constructor: (width, height) ->
+    constructor: (width, height, @config) ->
       @hexes = []
 
-      #setup a dictionary for use later for assigning the X or Y CoOrd (depending on Orientation)
-      HexagonsByXOrYCoOrd = {} #Dictionary<int, List<Hexagon>>
+      #setup a dictionary for use later for assigning the X or Y Coord (depending on Orientation)
+      HexagonsByXOrYCoord = {} #Dictionary<int, List<Hexagon>>
       row = 0
       y = 0.0
-      while y + Hexagon.Static.HEIGHT <= height
+      while y + @config.height <= height
         col = 0
         offset = 0.0
         if row % 2 is 1
-          if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
-            offset = (Hexagon.Static.WIDTH - Hexagon.Static.SIDE) / 2 + Hexagon.Static.SIDE
+          if @config.normalOrientation
+            offset = (@config.width - @config.side) / 2 + @config.side
           else
-            offset = Hexagon.Static.WIDTH / 2
+            offset = @config.width / 2
           col = 1
         x = offset
-        while x + Hexagon.Static.WIDTH <= width
+        while x + @config.width <= width
           hexId = @getHexId(row, col)
-          h = new Hexagon(hexId, x, y)
-          pathCoOrd = col
-          if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
+          h = new Hexagon(hexId, x, y, @config)
+          pathCoord = col
+          if @config.normalOrientation
             h.PathCoordX = col #the column is the x coordinate of the hex, for the y coordinate we need to get more fancy
           else
             h.PathCoordY = row
-            pathCoOrd = row
+            pathCoord = row
           @hexes.push h
-          HexagonsByXOrYCoOrd[pathCoOrd] = []  unless HexagonsByXOrYCoOrd[pathCoOrd]
-          HexagonsByXOrYCoOrd[pathCoOrd].push h
+          HexagonsByXOrYCoord[pathCoord] = []  unless HexagonsByXOrYCoord[pathCoord]
+          HexagonsByXOrYCoord[pathCoord].push h
           col += 2
-          if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
-            x += Hexagon.Static.WIDTH + Hexagon.Static.SIDE
+          if @config.normalOrientation
+            x += @config.width + @config.side
           else
-            x += Hexagon.Static.WIDTH
+            x += @config.width
         row++
-        if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
-          y += Hexagon.Static.HEIGHT / 2
+        if @config.normalOrientation
+          y += @config.height / 2
         else
-          y += (Hexagon.Static.HEIGHT - Hexagon.Static.SIDE) / 2 + Hexagon.Static.SIDE
+          y += (@config.height - @config.side) / 2 + @config.side
 
       #finally go through our list of hexagons by their x co-ordinate to assign the y co-ordinate
-      for coord1 of HexagonsByXOrYCoOrd
-        hexagonsByXOrY = HexagonsByXOrYCoOrd[coord1]
+      for coord1 of HexagonsByXOrYCoord
+        hexagonsByXOrY = HexagonsByXOrYCoord[coord1]
         coord2 = Math.floor(coord1 / 2) + (coord1 % 2)
         for i of hexagonsByXOrY
           h = hexagonsByXOrY[i] #Hexagon
-          if Hexagon.Static.ORIENTATION is Hexagon.Orientation.Normal
+          if @config.normalOrientation
             h.PathCoordY = coord2++
           else
             h.PathCoordX = coord2++
@@ -372,11 +374,11 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     ###
     Returns a distance between two hexes
     @this {Grid}
+    @property h1 {Hexagon}
+    @property h2 {Hexagon}
     @return {number}
     ###
-    getHexDistance: (h1, h2) -> #Hexagon
-    #Hexagon
-
+    getHexDistance: (h1, h2) ->
       #a good explanation of this calc can be found here:
       #http://playtechs.blogspot.com/2007/04/hex-grids.html
       deltaX = h1.PathCoordX - h2.PathCoordX
@@ -396,6 +398,23 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
   Grid.Static = Letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+  ###
+  Simple configuration object
+  ###
+  class HexConfig
+    constructor: (
+      @width = 91.14378277661477,
+      @height = 91.14378277661477,
+      @side = 50.0,
+      @normalOrientation = true,
+      @centerPoint = true,
+      @drawStats = false,
+      @letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ") ->
+
+    toggleOrientation: ->
+      @orientation = !@orientation
+
+
   return {
     Grid: Grid,
     Hexagon: Hexagon,
@@ -405,5 +424,4 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     changeOrientation: changeOrientation
     getHexGridZR: getHexGridZR
     getHexGridWH: getHexGridWH
-    changeOrientation: changeOrientation
   }
