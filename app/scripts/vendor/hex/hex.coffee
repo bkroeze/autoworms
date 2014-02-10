@@ -211,7 +211,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
           #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
           ctx.fillText @id, @midPoint.x, @midPoint.y
-        if @PathCoordX isnt null and @PathCoordY isnt null and typeof (@PathCoordX) isnt "undefined" and typeof (@PathCoordY) isnt "undefined"
+        if @pathCoordX isnt null and @pathCoordY isnt null and typeof (@pathCoordX) isnt "undefined" and typeof (@pathCoordY) isnt "undefined"
 
           #draw co-ordinates for debugging
           ctx.fillStyle = "black"
@@ -220,7 +220,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           ctx.textBaseline = "middle"
 
           #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
-          ctx.fillText "(" + @PathCoordX + "," + @PathCoordY + ")", @midPoint.x, @midPoint.y + 10
+          ctx.fillText "(" + @pathCoordX + "," + @pathCoordY + ")", @midPoint.x, @midPoint.y + 10
         if @config.drawStats
           ctx.strokeStyle = "black"
           ctx.lineWidth = 2
@@ -250,12 +250,12 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @returns {Array} Points of above, above-right, below-right, below, below-left, above-left hexes
     ###
     getNeighbors: -> [
-      new Point(@PathCoordX, @PathCoordY-1)
-      new Point(@PathCoordX+1, @PathCoordY)
-      new Point(@PathCoordX+1, @PathCoordY+1)
-      new Point(@PathCoordX, @PathCoordY+1)
-      new Point(@PathCoordX-1, @PathCoordY)
-      new Point(@PathCoordX-1, @PathCoordY-1)
+      new Point(@pathCoordX, @pathCoordY-1)
+      new Point(@pathCoordX+1, @pathCoordY)
+      new Point(@pathCoordX+1, @pathCoordY+1)
+      new Point(@pathCoordX, @pathCoordY+1)
+      new Point(@pathCoordX-1, @pathCoordY)
+      new Point(@pathCoordX-1, @pathCoordY-1)
     ]
 
 
@@ -349,9 +349,9 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
           pathCoord = col
           if @config.normalOrientation
-            h.PathCoordX = col #the column is the x coordinate of the hex, for the y coordinate we need to get more fancy
+            h.pathCoordX = col #the column is the x coordinate of the hex, for the y coordinate we need to get more fancy
           else
-            h.PathCoordY = row
+            h.pathCoordY = row
             pathCoord = row
           @hexes.push h
           HexagonsByXOrYCoord[pathCoord] = []  unless HexagonsByXOrYCoord[pathCoord]
@@ -373,10 +373,10 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
         coord2 = Math.floor(coord1 / 2) + (coord1 % 2)
         for i of hexagonsByXOrY
           h = hexagonsByXOrY[i] #Hexagon
-          if @config.normalOrientation
-            h.PathCoordY = coord2++
+          if @config.normalOrientation  
+            h.pathCoordY = coord2++
           else
-            h.PathCoordX = coord2++
+            h.pathCoordX = coord2++
 
       @rowMax++
       log.debug('Max: (' + @rowMax + ', ' + @colMax + ')')
@@ -404,8 +404,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     getHexDistance: (h1, h2) ->
       #a good explanation of this calc can be found here:
       #http://playtechs.blogspot.com/2007/04/hex-grids.html
-      deltaX = h1.PathCoordX - h2.PathCoordX
-      deltaY = h1.PathCoordY - h2.PathCoordY
+      deltaX = h1.pathCoordX - h2.pathCoordX
+      deltaY = h1.pathCoordY - h2.pathCoordY
       (Math.abs(deltaX) + Math.abs(deltaY) + Math.abs(deltaX - deltaY)) / 2
 
 
@@ -424,7 +424,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       log.debug('looking for ' + point.x + ',' + point.y)
 
       for hex in @hexes
-        return hex if hex.PathCoordX == point.x and hex.PathCoordY == point.y
+        return hex if hex.pathCoordX == point.x and hex.pathCoordY == point.y
 
       log.debug('could not find it')
 
