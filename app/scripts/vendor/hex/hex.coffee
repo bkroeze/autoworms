@@ -76,6 +76,15 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     drawHexGrid(canvas, config)
 
 
+  getHexId = (row, col, config) ->
+    letterIndex = row
+    letters = ""
+    while letterIndex > 25
+      letters = @config.letters[letterIndex % 26] + letters
+      letterIndex -= 26
+    config.letters[letterIndex] + letters + (col + 1)
+
+
   changeOrientation = (canvas, config) ->
     config.toggleOrientation()
     drawHexGrid(canvas, config)
@@ -129,7 +138,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
   @constructor
   ###
   class Hexagon
-    constructor: (@id, @x, @y, @config) ->
+    constructor: (@row, @col, @x, @y, @config) ->
+      @id = getHexId(@row, @col, @config)
       @points = [] #Polygon Base
       x1 = null
       y1 = null
@@ -181,7 +191,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       else
         ctx.lineWidth = 1
         ctx.beginPath()
-        log.debug @points
+        # log.debug @points
         ctx.moveTo @points[0].x, @points[0].y
         i = 1
 
@@ -234,6 +244,19 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           ctx.fillText "z = " + config.side, @p1.x, @p1.y + @y1 + 10
           ctx.fillText "(" + @x1.toFixed(2) + "," + @y1.toFixed(2) + ")", @p1.x, @p1.y + 10
       return
+
+    ###
+    Finds the six adjacent neighbors of this hex.
+    @returns {Array} [row, col] of above, above-right, below-right, below, below-left, above-left hexes
+    ###
+    getNeighbors: -> [
+      [@row, @col-1]
+      [@row+1, @col]
+      [@row+1, @col+1]
+      [@row, @col+1]
+      [@row-1, @col]
+      [@row-1, @col-1]
+    ]
 
 
     ###
@@ -300,6 +323,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     ###
     constructor: (width, height, @config) ->
       @hexes = []
+      @rowMax = 0
+      @colMax = 0
 
       #setup a dictionary for use later for assigning the X or Y Coord (depending on Orientation)
       HexagonsByXOrYCoord = {} #Dictionary<int, List<Hexagon>>
@@ -316,8 +341,12 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           col = 1
         x = offset
         while x + @config.width <= width
-          hexId = @getHexId(row, col)
-          h = new Hexagon(hexId, x, y, @config)
+          h = new Hexagon(row, col, x, y, @config)
+          if row > @rowMax
+            @rowMax = row
+          if row == 0 and col > @colMax
+            @colMax = col
+
           pathCoord = col
           if @config.normalOrientation
             h.PathCoordX = col #the column is the x coordinate of the hex, for the y coordinate we need to get more fancy
@@ -349,14 +378,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           else
             h.PathCoordX = coord2++
 
-    getHexId: (row, col) ->
-      letterIndex = row
-      letters = ""
-      while letterIndex > 25
-        letters = @config.letters[letterIndex % 26] + letters
-        letterIndex -= 26
-      @config.letters[letterIndex] + letters + (col + 1)
-
+      @rowMax++
+      log.debug('Max: (' + @rowMax + ', ' + @colMax + ')')
 
     ###
     Returns a hex at a given point
@@ -393,8 +416,51 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     ###
     getHexById: (id) ->
       for i of @hexes
-        return @hexes[i]  if @hexes[i].id is id
+        return @hexes[i] if @hexes[i].id is id
       null
+
+    ###
+    Turn a list of hex coordinates into a list of hexes
+    @param coords {Array} a list of row, col
+    @return {Array} of hexes
+    ###
+    getHexes: (coords) ->
+      hexes = []
+      row = c[0]
+      col = c[1]
+
+      for c of coords
+        hId = getHexId(row, col)
+        hexes.push(@getHexById(hId))
+
+      return hexes
+
+    resolveCoord: (x, y) ->
+      if x < 0
+        x = @rowMax + x + 1
+        y += Math.floor(x/2)
+
+      while x > @rowMax
+        x -= @rowMax
+        y -= Math.floor(@colMax/2)
+
+      delta = Math.floor(x/2)
+
+      #if y < delta
+      #  diff = y - delta
+      #  y = @colMax - diff
+
+#      y -= colMax
+#
+#      if y < 0
+#        y = colMax + y
+#
+#      while y > colMax
+#        y -= colMax
+#
+#      y += colMax
+
+      return [x, y]
 
 
   ###
@@ -406,7 +472,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       @height = 91.14378277661477,
       @side = 50.0,
       @normalOrientation = true,
-      @centerPoint = true,
+      @centerPoint = false,
       @drawStats = false,
       @letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ") ->
 

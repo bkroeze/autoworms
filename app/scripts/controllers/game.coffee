@@ -38,7 +38,9 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex) -
     canvas = document.getElementById 'wormsCanvas'
     if canvas
       log.debug 'starting'
-      hex.getHexGridWH 50, 65, canvas
+      $scope.grid = hex.getHexGridWH 50, 65, canvas
+      log.debug('Scope.grid done')
+      # log.debug($scope.grid)
     else
       log.debug 'deferring start ...'
       $timeout maybeStart, 500
