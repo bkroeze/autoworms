@@ -247,15 +247,15 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
     ###
     Finds the six adjacent neighbors of this hex.
-    @returns {Array} [row, col] of above, above-right, below-right, below, below-left, above-left hexes
+    @returns {Array} Points of above, above-right, below-right, below, below-left, above-left hexes
     ###
     getNeighbors: -> [
-      [@row, @col-1]
-      [@row+1, @col]
-      [@row+1, @col+1]
-      [@row, @col+1]
-      [@row-1, @col]
-      [@row-1, @col-1]
+      new Point(@PathCoordX, @PathCoordY-1)
+      new Point(@PathCoordX+1, @PathCoordY)
+      new Point(@PathCoordX+1, @PathCoordY+1)
+      new Point(@PathCoordX, @PathCoordY+1)
+      new Point(@PathCoordX-1, @PathCoordY)
+      new Point(@PathCoordX-1, @PathCoordY-1)
     ]
 
 
@@ -419,48 +419,56 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
         return @hexes[i] if @hexes[i].id is id
       null
 
-    ###
-    Turn a list of hex coordinates into a list of hexes
-    @param coords {Array} a list of row, col
-    @return {Array} of hexes
-    ###
-    getHexes: (coords) ->
-      hexes = []
-      row = c[0]
-      col = c[1]
+    getHexByPoint: (point) ->
+      point = @resolveCoord(point)
+      log.debug('looking for ' + point.x + ',' + point.y)
 
-      for c of coords
-        hId = getHexId(row, col)
-        hexes.push(@getHexById(hId))
+      for hex in @hexes
+        return hex if hex.PathCoordX == point.x and hex.PathCoordY == point.y
+
+      log.debug('could not find it')
+
+    ###
+    Turn a list of hex points into a list of hexes
+    @param points {Array} a list points
+    @return {Array} of Hexes
+    ###
+    getHexes: (points) ->
+      hexes = []
+
+      for point in points
+        log.debug('getting hex for ' + point.x + ',' + point.y)
+        hexes.push(@getHexByPoint(point))
 
       return hexes
 
-    resolveCoord: (x, y) ->
-      if x < 0
+    resolveCoord: (point) ->
+      x = point.x
+      y = point.y
+
+      while x < 0
         x = @rowMax + x + 1
-        y += Math.floor(x/2)
 
       while x > @rowMax
         x -= @rowMax
-        y -= Math.floor(@colMax/2)
 
-      delta = Math.floor(x/2)
+      bounds = @colLimits(x)
 
-      #if y < delta
-      #  diff = y - delta
-      #  y = @colMax - diff
+      while y < bounds[0]
+        y = y + bounds[1] - bounds[0] + 1
 
-#      y -= colMax
-#
-#      if y < 0
-#        y = colMax + y
-#
-#      while y > colMax
-#        y -= colMax
-#
-#      y += colMax
+      while y > bounds[1]
+        y = y - bounds[1] + bounds[0] - 1
 
-      return [x, y]
+      return new Point(x, y)
+
+    ###
+    Calculates the lower and upper limits of column indices for a given row
+    @param x {Integer} row
+    @returns {Array} [lower, upper]
+    ###
+    colLimits: (x) ->
+      [Math.ceil(x/2), (@colMax-Math.floor((@rowMax-x)/2))]
 
 
   ###
