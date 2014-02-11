@@ -373,7 +373,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
         coord2 = Math.floor(coord1 / 2) + (coord1 % 2)
         for i of hexagonsByXOrY
           h = hexagonsByXOrY[i] #Hexagon
-          if @config.normalOrientation  
+          if @config.normalOrientation
             h.pathCoordY = coord2++
           else
             h.pathCoordX = coord2++
