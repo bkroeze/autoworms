@@ -10,6 +10,16 @@ block header
 block bodyContent
   #content(ng-app='autoworms')
     .index(ng-controller='game')
+      form
+        .form-element
+          label Hex
+          input(ng-model='selectedHex')
+        .form-element
+          label Dir
+          select(ng-model='selectedDirection', ng-options='dir for dir in directions')
+        .form-element
+          input(type="button", ng-click='drawLine()', value='Draw')
+      hr
       canvas(id="wormsCanvas", width="800", height="600", style="width:800px;height:600px")
 
 block footer

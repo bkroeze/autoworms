@@ -480,13 +480,27 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       @height = 91.14378277661477,
       @side = 50.0,
       @normalOrientation = true,
-      @centerPoint = false,
+      @centerPoint = true,
       @drawStats = false,
       @letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ") ->
 
     toggleOrientation: ->
       @orientation = !@orientation
 
+  labels = [
+    'N'
+    'NE'
+    'SE'
+    'S'
+    'SW'
+    'NW'
+  ]
+
+  labelToIndex = (direction) ->
+    ix = labels.indexOf(direction);
+    if typeof ix == 'undefined'
+      throw new Error('bad direction: ' + direction)
+    ix
 
   return {
     Grid: Grid,
@@ -497,4 +511,6 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     changeOrientation: changeOrientation
     getHexGridZR: getHexGridZR
     getHexGridWH: getHexGridWH
+    labels: labels
+    labelToIndex: labelToIndex
   }
