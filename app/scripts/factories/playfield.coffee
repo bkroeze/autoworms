@@ -11,27 +11,40 @@ angular.module('autoworms').factory 'WormHex', (logger, hex) ->
         false
         false
       ]
+      @neighbors = null
+      @id = @hex.id
+
+    getNeighbors: ->
+      @neighbors = @playField.getNeighbors(this) if not @neighbors
+      @neighbors
 
     setIncoming: (direction, state=true) ->
       ix = (hex.labelToIndex(direction)+3) % 6
-      log.debug('hex ', @hex.id, ' incoming ', hex.labels[ix])
+      log.debug('hex ', @id, ' incoming ', hex.labels[ix])
       @used[ix] = state
 
     ###
     Mark a direction as "used", and also mark the neighbor hex as used in the correct position
+    @param direction {string} the direction label (i.e. N)
+    @param state {boolean} [optional] true to mark the direction "used"
+    @return {boolean} true if the direction state changed
     ###
     use: (direction, state=true) ->
       ix = hex.labelToIndex(direction)
+      if @used[ix] == state
+        return false
       @used[ix] = state
-      log.debug('hex ', @hex.id, ' use ', direction)
+      log.debug('hex ', @id, ' use ', direction)
 
-      neighbors = @playField.getNeighbors(this)
+      neighbors = @getNeighbors()
       neighbors[ix].setIncoming direction, state
+      @playField.markDirty(this.hex.id)
+      true
 
     draw: (ctx) ->
       neighbors = @playField.getNeighbors(this)
       for direction, i in @used when direction is true
-        log.debug('hex ', @hex.id, ' drawing ', hex.labels[i])
+        log.debug('hex ', @id, ' drawing ', hex.labels[i])
         neighbor = neighbors[i]
         mid = @hex.midPoint
         ctx.beginPath()
@@ -49,19 +62,25 @@ angular.module('autoworms').factory 'Playfield', (logger, WormHex) ->
 
   class Playfield
     constructor: (@grid) ->
+      @dirty = {}
       @hexes = {}
       for hex in @grid.hexes
-        console.log('Making new Wormhex: ' + hex.id);
         @hexes[hex.id] = new WormHex(this, hex)
 
     draw: (canvas) ->
       log.debug 'draw'
       ctx = canvas.getContext '2d'
-      for key, hex of @hexes
-        hex.draw ctx
+      for key, state of @dirty when state is true
+        log.debug('drawing dirty ', key);
+        @hexes[key].draw ctx
+      @dirty = {}
 
     getNeighbors: (wormhex) ->
       points = wormhex.hex.getNeighbors()
       hexes = @grid.getHexes(points)
       return (@hexes[hex.id] for hex in hexes)
+
+    markDirty: (hexId) ->
+      @dirty[hexId] = true
+
 

@@ -2,40 +2,11 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex, P
   log = logger 'game controller'
   log.debug 'started up'
 
-  # $scope.debugHexWH = hex.debugHexWH
-  # $scope.debugHexZR = hex.debugHexZR
-  # $scope.getHexGridZR = hex.getHexGridZR
-  # $scope.getHexGridWH = hex.getHexGridWH
-
-  #  $scope.changeOrientation = hex.changeOrientation
-  #
-  #  $scope.buildDebugHexGridWH = ->
-  #    width = parseFloat(document.getElementById("hexWidth").value)
-  #    height = parseFloat(document.getElementById("hexHeight").value)
-  #    canvas = document.getElementById('hexCanvas')
-  #    hex.debugHexGridWH(width, height, canvas)
-  #
-  #  $scope.buildDebugHexGridZR = ->
-  #    z = parseFloat(document.getElementById("sideLength").value)
-  #    r = parseFloat(document.getElementById("whRatio").value)
-  #    canvas = document.getElementById('hexCanvas')
-  #    hex.debugHexGridZR(z, r, canvas)
-  #
-  #  $scope.buildHexGridZR = ->
-  #    z = parseFloat(document.getElementById("sideLength").value)
-  #    r = parseFloat(document.getElementById("whRatio").value)
-  #    canvas = document.getElementById('hexCanvas')
-  #    hex.getHexGridZR(z, r, canvas)
-  #
-  #  $scope.buildHexGridWH = ->
-  #    width = parseFloat(document.getElementById("hexWidth").value)
-  #    height = parseFloat(document.getElementById("hexHeight").value)
-  #    canvas = document.getElementById('hexCanvas')
-  #    hex.getHexGridWH(width, height, canvas)
-
   $scope.selectedHex = 'C3';
   $scope.selectedDirection = 'N';
   $scope.directions = hex.labels;
+
+
   ###
   Draw a line using the current settings hex and direction
   ###
@@ -50,6 +21,10 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex, P
 
     wormHex.use $scope.selectedDirection
     $scope.playfield.draw $scope.canvas
+
+    # update the selectedHex with the neighbor we just moved to
+    $scope.selectedHex = wormHex.getNeighbors()[hex.labelToIndex($scope.selectedDirection)].id
+
 
   maybeStart = ->
     log.debug 'checking for start'

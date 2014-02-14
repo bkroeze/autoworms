@@ -421,7 +421,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
 
     getHexByPoint: (point) ->
       point = @resolveCoord(point)
-      log.debug('looking for ' + point.x + ',' + point.y)
+      #log.debug('looking for ' + point.x + ',' + point.y)
 
       for hex in @hexes
         return hex if hex.pathCoordX == point.x and hex.pathCoordY == point.y
@@ -437,7 +437,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       hexes = []
 
       for point in points
-        log.debug('getting hex for ' + point.x + ',' + point.y)
+        #log.debug('getting hex for ' + point.x + ',' + point.y)
         hexes.push(@getHexByPoint(point))
 
       return hexes
