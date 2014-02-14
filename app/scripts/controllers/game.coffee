@@ -1,10 +1,10 @@
-angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex, Playfield) ->
+angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexService, Hex, Playfield) ->
   log = logger 'game controller'
   log.debug 'started up'
 
   $scope.selectedHex = 'C3';
   $scope.selectedDirection = 'N';
-  $scope.directions = hex.labels;
+  $scope.directions = hexService.labels;
 
 
   ###
@@ -14,7 +14,7 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex, P
     if !$scope.selectedHex
       log.debug 'no selected hex'
       return false
-    wormHex = $scope.playfield.hexes[$scope.selectedHex]
+    wormHex = $scope.playfield.locations[$scope.selectedHex]
     if !wormHex
       log.debug 'Could not find hex for ', $scope.selectedHex
       return false
@@ -23,7 +23,7 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex, P
     $scope.playfield.draw $scope.canvas
 
     # update the selectedHex with the neighbor we just moved to
-    $scope.selectedHex = wormHex.getNeighbors()[hex.labelToIndex($scope.selectedDirection)].id
+    $scope.selectedHex = wormHex.getNeighbors()[hexService.labelToIndex($scope.selectedDirection)].id
 
 
   maybeStart = ->
@@ -31,8 +31,8 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hex, P
     $scope.canvas = document.getElementById 'wormsCanvas'
     if $scope.canvas
       log.debug 'starting'
-      grid = hex.getHexGridWH 50, 65, $scope.canvas
-      $scope.playfield = new Playfield grid
+      grid = hexService.getHexGridWH 50, 65, $scope.canvas
+      $scope.playfield = new Playfield grid, Hex
       log.debug 'Scope.grid done'
       # debugger
       # log.debug($scope.grid)

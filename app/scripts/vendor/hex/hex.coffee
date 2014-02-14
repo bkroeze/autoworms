@@ -4,7 +4,7 @@
   https://github.com/mpalmerlee/HexagonTools
 
 ###
-angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
+angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
 
   log = logger('hextools');
 
@@ -61,8 +61,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     grid = new Grid(800, 600, hexConfig)
     ctx = canvas.getContext("2d")
     ctx.clearRect 0, 0, 800, 600
-    for h of grid.hexes
-      grid.hexes[h].draw ctx
+    for h of grid.locations
+      grid.locations[h].draw ctx
     grid
 
 
@@ -322,7 +322,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @height: {double}
     ###
     constructor: (width, height, @config) ->
-      @hexes = []
+      @locations = []
       @rowMax = 0
       @colMax = 0
 
@@ -353,7 +353,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
           else
             h.pathCoordY = row
             pathCoord = row
-          @hexes.push h
+          @locations.push h
           HexagonsByXOrYCoord[pathCoord] = []  unless HexagonsByXOrYCoord[pathCoord]
           HexagonsByXOrYCoord[pathCoord].push h
           col += 2
@@ -381,6 +381,20 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
       @rowMax++
       log.debug('Max: (' + @rowMax + ', ' + @colMax + ')')
 
+
+    drawLineBetween: (ctx, locA, locB, color) ->
+      log.debug('hex ', locA.id, ' drawing to ', locB.id)
+      color = "black" if not color
+      mid = locA.midPoint
+      ctx.beginPath()
+      ctx.strokeStyle = color
+      ctx.lineWidth = 2
+      ctx.moveTo(mid.x, mid.y)
+      mid = locB.midPoint
+      ctx.lineTo(mid.x, mid.y)
+      ctx.stroke()
+      ctx.closePath()
+
     ###
     Returns a hex at a given point
     @this {Grid}
@@ -389,8 +403,8 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     getHexAt: (p) -> #Point
 
       #find the hex that contains this point
-      for h of @hexes
-        return @hexes[h]  if @hexes[h].contains(p)
+      for h of @locations
+        return @locations[h]  if @locations[h].contains(p)
       null
 
 
@@ -415,15 +429,15 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @return {Hexagon}
     ###
     getHexById: (id) ->
-      for i of @hexes
-        return @hexes[i] if @hexes[i].id is id
+      for i of @locations
+        return @locations[i] if @locations[i].id is id
       null
 
     getHexByPoint: (point) ->
       point = @resolveCoord(point)
       #log.debug('looking for ' + point.x + ',' + point.y)
 
-      for hex in @hexes
+      for hex in @locations
         return hex if hex.pathCoordX == point.x and hex.pathCoordY == point.y
 
       log.debug('could not find it')
@@ -433,7 +447,7 @@ angular.module('hextools', ['utils.logger']).service 'hex', (logger) ->
     @param points {Array} a list points
     @return {Array} of Hexes
     ###
-    getHexes: (points) ->
+    getLocations: (points) ->
       hexes = []
 
       for point in points
