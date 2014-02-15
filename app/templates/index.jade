@@ -22,6 +22,9 @@ block bodyContent
           select(ng-model='selectedColor', ng-options='color for color in colors')
         .form-element
           input(type="button", ng-click='drawLine()', value='Draw')
+          &nbsp;
+          input(type="button", ng-click='showNeighbors()', value='Neighbors')
+
       hr
       canvas(id="wormsCanvas", width="800", height="600", style="width:800px;height:600px")
 

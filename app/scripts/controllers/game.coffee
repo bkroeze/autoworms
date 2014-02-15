@@ -27,6 +27,19 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
     # update the selectedHex with the neighbor we just moved to
     $scope.selectedHex = wormHex.getNeighbors()[hexService.labelToIndex($scope.selectedDirection)].id
 
+  $scope.showNeighbors = ->
+    if !$scope.selectedHex
+      log.debug 'no selected hex'
+      return false
+    wormHex = $scope.playfield.locations[$scope.selectedHex]
+    if !wormHex
+      log.debug 'Could not find hex for ', $scope.selectedHex
+      return false
+    ctx = $scope.canvas.getContext('2d')
+
+    for neighbor, i in wormHex.getNeighbors()
+      neighbor.raw.draw(ctx, 'blue', hexService.labels[i])
+
 
   maybeStart = ->
     log.debug 'checking for start'

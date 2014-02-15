@@ -173,16 +173,18 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
     draws this Hexagon to the canvas
     @this {Hexagon}
     ###
-    draw: (ctx) ->
+    draw: (ctx, color = null, extraText=null) ->
+      selectedColor = color or "grey"
+      color = color or "black"
       # log.debug('drawing ' + @id)
       unless @selected
-        ctx.strokeStyle = "grey"
+        ctx.strokeStyle = selectedColor
       else
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = color
 
       if @config.centerPoint
         # log.debug('Center drawing')
-        ctx.fillStyle = "black"
+        ctx.fillStyle = color
         ctx.beginPath()
         ctx.moveTo @midPoint.x + 2, @midPoint.y
         ctx.arc(@midPoint.x, @midPoint.y, 2, 0, 2 * Math.PI, false)
@@ -204,17 +206,27 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
 
         if @id
           #draw text for debugging
-          ctx.fillStyle = "black"
+          ctx.fillStyle = color
           ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
           ctx.textAlign = "center"
           ctx.textBaseline = "middle"
 
           #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
           ctx.fillText @id, @midPoint.x, @midPoint.y
+
+          if extraText
+            ctx.fillStyle = color
+            ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+
+            ctx.fillText extraText, @midPoint.x, @midPoint.y - 10
+
+        # show it on the line above
         if @pathCoordX isnt null and @pathCoordY isnt null and typeof (@pathCoordX) isnt "undefined" and typeof (@pathCoordY) isnt "undefined"
 
           #draw co-ordinates for debugging
-          ctx.fillStyle = "black"
+          ctx.fillStyle = color
           ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
           ctx.textAlign = "center"
           ctx.textBaseline = "middle"
@@ -222,7 +234,7 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
           #var textWidth = ctx.measureText(this.Planet.BoundingHex.Id);
           ctx.fillText "(" + @pathCoordX + "," + @pathCoordY + ")", @midPoint.x, @midPoint.y + 10
         if @config.drawStats
-          ctx.strokeStyle = "black"
+          ctx.strokeStyle = color
           ctx.lineWidth = 2
 
           #draw our x1, y1, and z
@@ -232,7 +244,7 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
           ctx.lineTo @x, @p1.y
           ctx.closePath()
           ctx.stroke()
-          ctx.fillStyle = "black"
+          ctx.fillStyle = color
           ctx.font = "bolder 8pt Trebuchet MS,Tahoma,Verdana,Arial,sans-serif"
           ctx.textAlign = "left"
           ctx.textBaseline = "middle"
@@ -382,9 +394,8 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
       log.debug('Max: (' + @rowMax + ', ' + @colMax + ')')
 
 
-    drawLineBetween: (ctx, locA, locB, color) ->
+    drawLineBetween: (ctx, locA, locB, color='black') ->
       log.debug('hex ', locA.id, ' drawing to ', locB.id)
-      color = "black" if not color
       mid = locA.midPoint
       ctx.beginPath()
       ctx.strokeStyle = color
@@ -394,6 +405,9 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
       ctx.lineTo(mid.x, mid.y)
       ctx.stroke()
       ctx.closePath()
+      locA.draw(ctx)
+      locB.draw(ctx)
+
 
     ###
     Returns a hex at a given point
@@ -472,7 +486,7 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
         y = y + bounds[1] - bounds[0] + 1
 
       while y > bounds[1]
-        y = y - bounds[1] + bounds[0] - 1
+        y = y - bounds[1] + bounds[0]
 
       return new Point(x, y)
 
@@ -494,7 +508,7 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
       @height = 91.14378277661477,
       @side = 50.0,
       @normalOrientation = true,
-      @centerPoint = true,
+      @centerPoint = false,
       @drawStats = false,
       @letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ") ->
 
