@@ -62,7 +62,7 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
     {name: 'test', interval: 1000, handlers: [logIt]}
   ])
 
-  GameTimer.start('test')
+  # GameTimer.start('test')
 
   maybeStart()
 

@@ -1,1 +1,1 @@
-angular.module('autoworms.maps', [])
+angular.module('autoworms.factories.maps', [])

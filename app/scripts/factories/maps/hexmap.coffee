@@ -1,4 +1,4 @@
-angular.module('autoworms.maps').factory 'Hex', (logger, hexService) ->
+angular.module('autoworms.factories.maps').factory 'Hex', (logger, hexService) ->
   log = logger 'maps.Hex'
 
   class Hex

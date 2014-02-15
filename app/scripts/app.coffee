@@ -1,5 +1,5 @@
 angular.module('autoworms', [
-  'autoworms.maps',
+  'autoworms.factories',
   'autoworms.services',
   'utils.logger',
   'hextools'])

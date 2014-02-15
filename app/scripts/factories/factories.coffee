@@ -1,0 +1,1 @@
+angular.module('autoworms.factories', ['autoworms.factories.maps'])

@@ -61,6 +61,8 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
     grid = new Grid(800, 600, hexConfig)
     ctx = canvas.getContext("2d")
     ctx.clearRect 0, 0, 800, 600
+    ctx.fillStyle = 'black'
+    ctx.fillRect 0, 0, 800, 600
     for h of grid.locations
       grid.locations[h].draw ctx
     grid
@@ -174,8 +176,8 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
     @this {Hexagon}
     ###
     draw: (ctx, color = null, extraText=null) ->
-      selectedColor = color or "grey"
-      color = color or "black"
+      selectedColor = color or "lightblue"
+      color = color or "grey"
       # log.debug('drawing ' + @id)
       unless @selected
         ctx.strokeStyle = selectedColor
@@ -508,7 +510,7 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
       @height = 91.14378277661477,
       @side = 50.0,
       @normalOrientation = true,
-      @centerPoint = false,
+      @centerPoint = true,
       @drawStats = false,
       @letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ") ->
 
@@ -530,6 +532,19 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
       throw new Error('bad direction: ' + direction)
     ix
 
+  resolveLabelIndex = (ix) ->
+    while ix<0
+      ix += labels.length
+
+    ix % labels.length
+
+  indexToLabel = (ix) ->
+    ix = resolveLabelIndex(ix)
+    while ix<0
+      ix += labels.length
+
+    labels[ix % labels.length]
+
   return {
     Grid: Grid,
     Hexagon: Hexagon,
@@ -541,4 +556,6 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
     getHexGridWH: getHexGridWH
     labels: labels
     labelToIndex: labelToIndex
+    indexToLabel: indexToLabel
+    resolveLabelIndex: resolveLabelIndex
   }

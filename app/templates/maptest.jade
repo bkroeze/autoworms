@@ -1,0 +1,28 @@
+extends base
+block title
+  title Autoworms - MapTest
+block header
+  #header
+    h1 Autoworms - MapTest
+block bodyContent
+  #content(ng-app='autoworms')
+    .index(ng-controller='game')
+      form
+        .form-element
+          label Hex
+          input(ng-model='selectedHex')
+        .form-element
+          label Dir
+          select(ng-model='selectedDirection', ng-options='dir for dir in directions')
+        .form-element
+          label Color
+          select(ng-model='selectedColor', ng-options='color for color in colors')
+        .form-element
+          input(type="button", ng-click='drawLine()', value='Draw')
+          &nbsp;
+          input(type="button", ng-click='showNeighbors()', value='Neighbors')
+      hr
+
+      canvas(id="wormsCanvas", width="800", height="600", style="width:800px;height:600px")
+block footer
+  // pass

@@ -1,4 +1,10 @@
-#body {
-  color: blue;
+body {
+  background-color: black;
   margin: 1em;
+  color: white;
+
+  canvas {
+    margin: 1em auto;
+  }
 }
+
