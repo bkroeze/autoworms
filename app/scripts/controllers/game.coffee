@@ -1,4 +1,4 @@
-angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexService, Hex, Playfield) ->
+angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexService, Hex, Playfield, GameTimer) ->
   log = logger 'game controller'
   log.debug 'started up'
 
@@ -54,6 +54,15 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
     else
       log.debug 'deferring start ...'
       $timeout maybeStart, 500
+
+  logIt = (tick) ->
+    console.log('timer exec! ', tick)
+
+  GameTimer.addTimers([
+    {name: 'test', interval: 1000, handlers: [logIt]}
+  ])
+
+  GameTimer.start('test')
 
   maybeStart()
 
