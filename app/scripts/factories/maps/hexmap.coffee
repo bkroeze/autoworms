@@ -26,10 +26,10 @@ angular.module('autoworms.maps').factory 'Hex', (logger, hexService) ->
     ###
     Mark a direction as "used", and also mark the neighbor hex as used in the correct position
     @param direction {string} the direction label (i.e. N)
-    @param state {boolean} [optional] true to mark the direction "used"
+    @param state {string} [optional] color to use, null for empty
     @return {boolean} true if the direction state changed
     ###
-    use: (direction, state=true) ->
+    use: (direction, state='black') ->
       ix = hexService.labelToIndex(direction)
       if @used[ix] == state
         return false
@@ -44,5 +44,5 @@ angular.module('autoworms.maps').factory 'Hex', (logger, hexService) ->
     draw: (ctx) ->
       neighbors = @playfield.getNeighbors(this)
       grid = @playfield.grid
-      for direction, i in @used when direction is true
-        grid.drawLineBetween(ctx, @raw, neighbors[i].raw, 'black')
+      for direction, i in @used when direction != null
+        grid.drawLineBetween(ctx, @raw, neighbors[i].raw, direction)

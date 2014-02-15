@@ -2,9 +2,11 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
   log = logger 'game controller'
   log.debug 'started up'
 
-  $scope.selectedHex = 'C3';
-  $scope.selectedDirection = 'N';
-  $scope.directions = hexService.labels;
+  $scope.selectedHex = 'C3'
+  $scope.selectedDirection = 'N'
+  $scope.selectedColor = 'red'
+  $scope.directions = hexService.labels
+  $scope.colors = ['black', 'red', 'green', 'blue', 'orange', 'purple', 'violet']
 
 
   ###
@@ -19,7 +21,7 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
       log.debug 'Could not find hex for ', $scope.selectedHex
       return false
 
-    wormHex.use $scope.selectedDirection
+    wormHex.use $scope.selectedDirection,  $scope.selectedColor
     $scope.playfield.draw $scope.canvas
 
     # update the selectedHex with the neighbor we just moved to
