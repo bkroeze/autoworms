@@ -1,5 +1,10 @@
-angular.module('autoworms.services').factory 'TimerInstance', (logger, $timeout) ->
+angular.module('autoworms.services').factory 'TimerInstance', (logger, $timeout, $window) ->
   class TimerInstance
+    ###
+    @param name {String} name of timer
+    @param interval {*} If a number, then run using timeouts at that many ms, if 'animation', then use requestAnimationFrame
+    @param handlers {Array} list of handlers to attach to this timer
+    ###
     constructor: (@name, @interval=null, handlers=[]) ->
       @running = false
       @handlers = []
@@ -17,14 +22,17 @@ angular.module('autoworms.services').factory 'TimerInstance', (logger, $timeout)
 
 
     executeHandlers: =>
-      @tick++
-      handler(@tick) for handler in @handlers
       if @running
         @startInterval()
+      @tick++
+      handler(@tick) for handler in @handlers
 
 
     startInterval: ->
-      @timerHandle = $timeout(@executeHandlers, @interval, @invokeApply)
+      if @animation
+        @timerHandle = $window.requestAnimationFrame(@executeHandlers)
+      else
+        @timerHandle = $timeout(@executeHandlers, @interval, @invokeApply)
 
 
     start: ->

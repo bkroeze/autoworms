@@ -56,13 +56,14 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
       $timeout maybeStart, 500
 
   logIt = (tick) ->
-    console.log('timer exec! ', tick)
+    if tick % 60 == 0
+      console.log('timer exec! ', tick)
 
   GameTimer.addTimers([
-    {name: 'test', interval: 1000, handlers: [logIt]}
+    {name: 'test', interval: 'animation', handlers: [logIt]}
   ])
 
-  # GameTimer.start('test')
+  #GameTimer.start('test')
 
   maybeStart()
 
