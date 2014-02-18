@@ -396,12 +396,12 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
       log.debug('Max: (' + @rowMax + ', ' + @colMax + ')')
 
 
-    drawLineBetween: (ctx, locA, locB, color='black') ->
-      log.debug('hex ', locA.id, ' drawing to ', locB.id)
+    drawLineBetween: (ctx, locA, locB, color='black', width=2) ->
+      log.debug('hex ', locA.id, ' drawing to ', locB.id, ' with color=', color)
       mid = locA.midPoint
       ctx.beginPath()
       ctx.strokeStyle = color
-      ctx.lineWidth = 2
+      ctx.lineWidth = width
       ctx.moveTo(mid.x, mid.y)
       mid = locB.midPoint
       ctx.lineTo(mid.x, mid.y)

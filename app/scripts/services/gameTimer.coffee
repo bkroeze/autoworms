@@ -5,31 +5,42 @@ angular.module('autoworms.services').factory 'TimerInstance', (logger, $timeout,
     @param interval {*} If a number, then run using timeouts at that many ms, if 'animation', then use requestAnimationFrame
     @param handlers {Array} list of handlers to attach to this timer
     ###
-    constructor: (@name, @interval=null, handlers=[]) ->
+    constructor: (@name, @interval, handlers) ->
       @running = false
       @handlers = []
       @timerHandle = null
       @invokeApply = true
       @log = logger('services.TimerInstance.' + @name)
+      @log.debug('creating ' + @name)
       @tick = 0
+      @log.debug('adding ' + handlers.length + ' handlers')
       for handler in handlers
         @log.debug('adding handler')
         @addHandler(handler)
 
 
     addHandler: (handler) ->
+      @log.debug('adding handler')
       @handlers.push(handler)
 
 
     executeHandlers: =>
-      if @running
+      if @running and @handlers.length > 0
         @startInterval()
       @tick++
-      handler(@tick) for handler in @handlers
+
+      #if a handler returns false, then remove it from the next run
+      nextHandlers = []
+
+      for handler in @handlers
+        if handler(@tick)
+          nextHandlers.push(handler)
+
+      @handlers = nextHandlers
 
 
     startInterval: ->
-      if @animation
+      if @interval == 'animation'
         @timerHandle = $window.requestAnimationFrame(@executeHandlers)
       else
         @timerHandle = $timeout(@executeHandlers, @interval, @invokeApply)
@@ -53,16 +64,16 @@ angular.module('autoworms.services').factory 'TimerInstance', (logger, $timeout,
     stop: ->
       @running = false
       if @timerHandle
-        log.debug('Cancelling running timer')
-        $timeout.cancel(@timerHandle)
-      log.debug('Halted')
+        @log.debug('Cancelling running timer')
+        if @interval = 'animation'
+          $window.cancelAnimationFrame(@timerHandle)
+        else
+          $timeout.cancel(@timerHandle)
+      @log.debug('Halted')
 
+timers = {}
 
-angular.module('autoworms.services').service 'GameTimer', (logger, TimerInstance) ->
-
-  timers = {}
-  log = logger('services.GameTimer')
-
+angular.module('autoworms.services').service 'GameTimer', (TimerInstance) ->
   ###
   Add several timers at once
   @param timerDefs {Array} of objects with name, interval (optional) and handlers (optional)
@@ -72,7 +83,6 @@ angular.module('autoworms.services').service 'GameTimer', (logger, TimerInstance
 
   addTimer = (name, interval, handlers) ->
     if not timers[name]?
-      log.debug('creating new Timer: ', name)
       timers[name] = new TimerInstance(name, interval, handlers)
 
     timers[name]
@@ -95,6 +105,7 @@ angular.module('autoworms.services').service 'GameTimer', (logger, TimerInstance
     addTimer: addTimer,
     get: get,
     start: start,
-    stop: stop
+    stop: stop,
+    timers: timers
   }
 

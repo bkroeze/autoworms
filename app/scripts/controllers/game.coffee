@@ -1,4 +1,4 @@
-angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexService, Hex, Playfield, GameTimer) ->
+angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexService, Hex, Playfield, GameTimer, ChoicePulser) ->
   log = logger 'game controller'
   log.debug 'started up'
 
@@ -13,9 +13,6 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
   Draw a line using the current settings hex and direction
   ###
   $scope.drawLine = ->
-    if !$scope.selectedHex
-      log.debug 'no selected hex'
-      return false
     wormHex = $scope.playfield.locations[$scope.selectedHex]
     if !wormHex
       log.debug 'Could not find hex for ', $scope.selectedHex
@@ -26,6 +23,15 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
 
     # update the selectedHex with the neighbor we just moved to
     $scope.selectedHex = wormHex.getNeighbors()[hexService.labelToIndex($scope.selectedDirection)].id
+
+  $scope.makePulser = ->
+    wormHex = $scope.playfield.locations[$scope.selectedHex]
+    if !wormHex
+      log.debug 'Could not find hex for ', $scope.selectedHex
+      return false
+
+    ctx = $scope.canvas.getContext('2d')
+    ChoicePulser.create(ctx, $scope.selectedColor, wormHex)
 
   $scope.showNeighbors = ->
     if !$scope.selectedHex
@@ -57,7 +63,9 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
 
   logIt = (tick) ->
     if tick % 60 == 0
-      console.log('timer exec! ', tick)
+      console.log('animation timer exec! ', tick)
+      return false
+    true
 
   GameTimer.addTimers([
     {name: 'test', interval: 'animation', handlers: [logIt]}
