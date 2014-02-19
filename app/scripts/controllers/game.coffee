@@ -31,7 +31,8 @@ angular.module('autoworms').controller 'game', ($scope, $timeout, logger, hexSer
       return false
 
     ctx = $scope.canvas.getContext('2d')
-    ChoicePulser.create(ctx, $scope.selectedColor, wormHex)
+    direction = hexService.labelToIndex($scope.selectedDirection)
+    ChoicePulser.create(ctx, $scope.selectedColor, wormHex, direction)
 
   $scope.showNeighbors = ->
     if !$scope.selectedHex

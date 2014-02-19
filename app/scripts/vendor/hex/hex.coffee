@@ -6,7 +6,7 @@
 ###
 angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
 
-  log = logger('hextools');
+  log = logger('hexService');
 
   # ------------------------
   # Hex calculations
@@ -397,7 +397,7 @@ angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
 
 
     drawLineBetween: (ctx, locA, locB, color='black', width=2) ->
-      log.debug('hex ', locA.id, ' drawing to ', locB.id, ' with color=', color)
+      #log.debug('hex ', locA.id, ' drawing to ', locB.id, ' with color=', color)
       mid = locA.midPoint
       ctx.beginPath()
       ctx.strokeStyle = color
