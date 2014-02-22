@@ -1,17 +1,19 @@
 'use strict';
 var gulp = require('gulp'),
   autoprefixer = require('gulp-autoprefixer'),
+  clean = require('gulp-clean'),
   coffee = require('gulp-coffee'),
+  coffeelint = require('gulp-coffeelint'),
   concat = require('gulp-concat'),
   connect = require('gulp-connect'),
   jade = require('gulp-jade'),
-  uglify = require('gulp-uglify'),
-  coffeelint = require('gulp-coffeelint'),
-  clean = require('gulp-clean'),
-  util = require('gulp-util'),
+  livereload = require('gulp-livereload'),
   maybe = require('gulp-if'),
   ngmin = require('gulp-ngmin'),
+  reloader = require('connect-livereload'),
   sass = require('gulp-sass'),
+  uglify = require('gulp-uglify'),
+  util = require('gulp-util'),
   production = util.env.production || util.env.prod,
   paths = {
     build: 'build',
@@ -19,12 +21,12 @@ var gulp = require('gulp'),
       src: 'app/scripts/**/*.coffee',
       dest: 'build/scripts'
     },
-    vendor: {
+    js: {
       src: 'app/scripts/**/*.js',
       dest: 'build/scripts'
     },
     styles: {
-      src: 'app/styles/**/*scss',
+      src: 'app/styles/**/*.scss',
       dest: 'build/styles'
     },
     templates: {
@@ -33,12 +35,24 @@ var gulp = require('gulp'),
     }
   };
 
+var EXPRESS_PORT = 9000;
+var EXPRESS_ROOT = 'build';
+var LIVERELOAD_PORT = 35729;
+
+gulp.task('server', function() {
+  var express = require('express');
+  var app = express();
+  app.use(reloader({
+    port: LIVERELOAD_PORT
+  }));
+  app.use(express.static(EXPRESS_ROOT));
+  app.listen(EXPRESS_PORT);
+});
+
 gulp.task('clean', function() {
   return gulp.src(paths.build)
     .pipe(clean());
 });
-
-
 
 gulp.task('scripts', function() {
   return gulp.src(paths.scripts.src)
@@ -49,11 +63,11 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest(paths.scripts.dest));
 });
 
-gulp.task('vendor', function() {
-  return gulp.src(paths.vendor.src)
+gulp.task('js', function() {
+  return gulp.src(paths.js.src)
     .pipe(maybe(production, uglify()))
-    .pipe(maybe(production, concat('vendor.min.js')))
-    .pipe(gulp.dest(paths.scripts.dest));
+    .pipe(maybe(production, concat('js.min.js')))
+    .pipe(gulp.dest(paths.js.dest));
 });
 
 gulp.task('styles', function() {
@@ -82,10 +96,17 @@ gulp.task('templates', function() {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./app/*.jade'], ['templates']);
-  gulp.watch(['./app/styles/*.scss'], ['styles']);
-  gulp.watch(['./app/scripts/*.coffee'], ['scripts']);
+  setTimeout(function() {
+    util.log('Starting the watches');
+    var server = livereload(LIVERELOAD_PORT);
+    gulp.watch('build/**/*').on('change', function(file) {
+      server.changed(file.path);
+    });
+    gulp.watch(paths.templates.src, ['templates']);
+    gulp.watch(paths.styles.src, ['styles']);
+    gulp.watch(paths.scripts.src, ['scripts']);
+  }, 2000);
 });
 
 // gulp.task('default', ['lint', 'clean', 'styles', 'templates', 'scripts', 'server', 'watch']);
-gulp.task('default', ['clean', 'styles', 'templates', 'scripts', 'vendor', 'watch']);
+gulp.task('default', ['clean', 'styles', 'templates', 'scripts', 'js', 'server', 'watch']);
