@@ -6,7 +6,7 @@
 ###
 angular.module('hextools', ['autoworms.services']).service 'hexService', (logger) ->
 
-  log = logger('hexService');
+  log = logger('hexService')
 
   # ------------------------
   # Hex calculations
@@ -28,7 +28,8 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
     y = ((2.0 * x) + z) / (2.0 * r)
     width = ((2.0 * x) + z)
     height = (2.0 * y)
-    # log.debug "Values for Hex: \nSide Length, z: " + z + "\nx:" + x + "\ny: " + y + "\nWidth:" + width + "\nHeight: " + height
+    # log.debug "Values for Hex: \nSide Length, z: " + z + "\nx:" + x + "\ny: " +
+    #   y + "\nWidth:" + width + "\nHeight: " + height
     new HexConfig(width, height, z)
 
 

@@ -23,6 +23,9 @@
     "connect-livereload": "~0.3.2",
     "gulp-livereload": "~1.1.1",
     "gulp-connect": "~1.0.4",
-    "gulp-spawn": "~0.2.1"
+    "gulp-spawn": "~0.2.1",
+    "through2": "~0.4.1",
+    "require-like": "~0.1.2",
+    "minijasminenode": "~0.2.7"
   }
 }

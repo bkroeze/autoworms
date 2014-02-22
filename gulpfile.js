@@ -7,9 +7,11 @@ var gulp = require('gulp'),
   concat = require('gulp-concat'),
   connect = require('gulp-connect'),
   jade = require('gulp-jade'),
+  jasmine = require('gulp-jasmine'),
   livereload = require('gulp-livereload'),
   maybe = require('gulp-if'),
   ngmin = require('gulp-ngmin'),
+  preload = require('./tests/preload'),
   reloader = require('connect-livereload'),
   sass = require('gulp-sass'),
   uglify = require('gulp-uglify'),
@@ -33,6 +35,10 @@ var gulp = require('gulp'),
     templates: {
       src: 'app/templates/**/*.jade',
       dest: 'build'
+    },
+    tests: {
+        dest: 'build/tests',
+        unit: 'tests/unit/**/*.coffee'
     }
   };
 
@@ -101,6 +107,15 @@ gulp.task('templates', function() {
       }))
     .pipe(gulp.dest(paths.templates.dest));
 });
+
+gulp.task('test-unit', function() {
+ return gulp.src(paths.tests.unit)
+   .pipe(coffee())
+   .pipe(gulp.dest(paths.tests.dest))
+   .pipe(jasmine());
+});
+
+gulp.task('test', ['clean', 'js', 'scripts', 'test-unit']);
 
 gulp.task('watch', function () {
   setTimeout(function() {
