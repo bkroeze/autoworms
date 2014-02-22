@@ -15,6 +15,7 @@ var gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   util = require('gulp-util'),
   production = util.env.production || util.env.prod,
+  spawn = require('gulp-spawn'),
   paths = {
     build: 'build',
     scripts: {
@@ -51,7 +52,13 @@ gulp.task('server', function() {
 
 gulp.task('clean', function() {
   return gulp.src(paths.build)
-    .pipe(clean());
+    .pipe(spawn({
+          cmd: 'rm',
+          args: [
+              '-rf',
+              'build'
+          ]
+      }));
 });
 
 gulp.task('scripts', function() {

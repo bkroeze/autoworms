@@ -1,4 +1,4 @@
-angular.module('utils.logger', []).service 'logger', ->
+angular.module('autoworms.services').service 'logger', ->
 
   _logger = null
 

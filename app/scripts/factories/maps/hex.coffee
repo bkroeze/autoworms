@@ -4,7 +4,7 @@
   https://github.com/mpalmerlee/HexagonTools
 
 ###
-angular.module('hextools', ['utils.logger']).service 'hexService', (logger) ->
+angular.module('hextools', ['autoworms.services']).service 'hexService', (logger) ->
 
   log = logger('hexService');
 

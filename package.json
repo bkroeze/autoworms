@@ -21,6 +21,8 @@
     "gulp-sass": "~0.7.0",
     "gulp-ngmin": "~0.1.2",
     "connect-livereload": "~0.3.2",
-    "gulp-livereload": "~1.1.1"
+    "gulp-livereload": "~1.1.1",
+    "gulp-connect": "~1.0.4",
+    "gulp-spawn": "~0.2.1"
   }
 }
