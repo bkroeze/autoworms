@@ -23,6 +23,19 @@
     "express": "~3.4.8",
     "grunt-open": "~0.2.3",
     "grunt-ngmin": "0.0.3",
-    "glob": "~3.2.8"
+    "glob": "~3.2.8",
+    "gulp-concat": "~2.1.7",
+    "gulp": "~3.5.2",
+    "gulp-coffee": "~1.4.1",
+    "gulp-util": "~2.2.14",
+    "coffee-script": "~1.7.1",
+    "gulp-uglify": "~0.2.1",
+    "gulp-coffeelint": "~0.2.2",
+    "gulp-jade": "~0.4.2",
+    "gulp-clean": "~0.2.4",
+    "gulp-if": "0.0.5",
+    "gulp-autoprefixer": "0.0.6",
+    "gulp-sass": "~0.7.0",
+    "gulp-ngmin": "~0.1.2"
   }
 }
