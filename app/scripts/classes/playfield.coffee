@@ -4,7 +4,8 @@ class Playfield
     @dirty = {}
     @locations = {}
     for raw in @grid.locations
-      @locations[raw.id] = new Location(this, raw)
+      loc = new Location(this, raw)
+      @locations[loc.id] = loc
 
 
   draw: (canvas) ->
@@ -16,7 +17,7 @@ class Playfield
     @dirty = {}
 
   getNeighbors: (location) ->
-    points = location.raw.getNeighbors()
+    points = location.getNeighbors()
     locs = @grid.getLocations(points)
     (@locations[loc.id] for loc in locs)
 

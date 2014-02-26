@@ -26,6 +26,7 @@
     "gulp-spawn": "~0.2.1",
     "through2": "~0.4.1",
     "require-like": "~0.1.2",
-    "minijasminenode": "~0.2.7"
+    "minijasminenode": "~0.2.7",
+    "gulp-jasmine": "~0.1.4"
   }
 }

@@ -1,4 +1,7 @@
-class BasePlayfieldLocation
+###
+  Base class for locations on the playfield,  which wraps the underlying "GridLocation"
+###
+class PlayfieldLocation
   constructor: (@playfield, Location) ->
     @neighbors = []
     @dirty = {}
