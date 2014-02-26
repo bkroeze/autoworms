@@ -7,3 +7,5 @@ class GridLocation
 
   getNeighbors: () ->
     return @raw.getNeighbors()
+
+module.exports = GridLocation

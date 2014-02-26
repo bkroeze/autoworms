@@ -13,3 +13,5 @@ class PlayfieldLocation
   getNeighbors: () ->
     @neighbors = @playfield.getNeighbors(this) if not @neighbors
     @neighbors
+
+module.exports = PlayfieldLocation

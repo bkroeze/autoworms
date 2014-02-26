@@ -20,3 +20,4 @@ describe 'GridLocation', ->
 
     expect(g.getNeighbors()).toEqual(loc.getNeighbors())
 
+  null
