@@ -1,4 +1,4 @@
-Worm = require('../../../build/scripts/classes/Worm.js')
+Worm = require('../../../build/scripts/game/classes/Worm.js')
 
 describe 'Worm', ->
   w = null
@@ -27,3 +27,5 @@ describe 'Worm', ->
     used = [true, true, false, false]
     w.update(used, 3)
     expect(w.nextMove(used)).toBe(3)
+
+  null

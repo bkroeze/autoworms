@@ -117,6 +117,9 @@ gulp.task('test-unit', function() {
 
 gulp.task('test', ['clean', 'js', 'scripts', 'test-unit']);
 
+// ZSH autocomplete, very annoying
+gulp.task('tests', ['test'])
+
 gulp.task('watch', function () {
   setTimeout(function() {
     util.log('Starting the watches');

@@ -417,7 +417,7 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
     @this {Grid}
     @return {Hexagon}
     ###
-    getHexAt: (p) -> #Point
+    getLocation: (p) -> #Point
 
       #find the hex that contains this point
       for h of @locations
@@ -432,7 +432,7 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
     @property h2 {Hexagon}
     @return {number}
     ###
-    getHexDistance: (h1, h2) ->
+    getDistance: (h1, h2) ->
       #a good explanation of this calc can be found here:
       #http://playtechs.blogspot.com/2007/04/hex-grids.html
       deltaX = h1.pathCoordX - h2.pathCoordX
@@ -445,13 +445,13 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
     @this {Grid}
     @return {Hexagon}
     ###
-    getHexById: (id) ->
+    get: (id) ->
       for i of @locations
         return @locations[i] if @locations[i].id is id
       null
 
-    getHexByPoint: (point) ->
-      point = @resolveCoord(point)
+    getLocation: (point) ->
+      point = @resolve(point)
       #log.debug('looking for ' + point.x + ',' + point.y)
 
       for hex in @locations
@@ -469,11 +469,11 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
 
       for point in points
         #log.debug('getting hex for ' + point.x + ',' + point.y)
-        hexes.push(@getHexByPoint(point))
+        hexes.push(@getLocation(point))
 
       return hexes
 
-    resolveCoord: (point) ->
+    resolve: (point) ->
       x = point.x
       y = point.y
 
@@ -527,25 +527,6 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
     'NW'
   ]
 
-  labelToIndex = (direction) ->
-    ix = labels.indexOf(direction);
-    if typeof ix == 'undefined'
-      throw new Error('bad direction: ' + direction)
-    ix
-
-  resolveLabelIndex = (ix) ->
-    while ix<0
-      ix += labels.length
-
-    ix % labels.length
-
-  indexToLabel = (ix) ->
-    ix = resolveLabelIndex(ix)
-    while ix<0
-      ix += labels.length
-
-    labels[ix % labels.length]
-
   return {
     Grid: Grid,
     Hexagon: Hexagon,
@@ -556,7 +537,4 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
     getHexGridZR: getHexGridZR
     getHexGridWH: getHexGridWH
     labels: labels
-    labelToIndex: labelToIndex
-    indexToLabel: indexToLabel
-    resolveLabelIndex: resolveLabelIndex
   }

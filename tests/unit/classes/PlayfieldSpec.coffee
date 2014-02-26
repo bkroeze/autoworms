@@ -1,5 +1,6 @@
-Playfield = require('../../../build/scripts/classes/Playfield')
-BasePlayfieldLocation = require('../../../build/scripts/classes/PlayfieldLocation')
+Playfield = require('../../../build/scripts/game/classes/Playfield')
+PlayfieldLocation = require('../../../build/scripts/game/classes/PlayfieldLocation')
+Grid = require('../../../build/scripts/maps/classes/Grid')
 
 class FakeGridLocation
   @directionCt: 4
@@ -12,12 +13,12 @@ class FakeGridLocation
     []
 
 
-class FakePlayfieldLocation extends BasePlayfieldLocation
+class FakePlayfieldLocation extends PlayfieldLocation
   constructor: (playfield)  ->
     super(playfield, FakeGridLocation)
     @id = @raw.id
 
-class FakeGrid
+class FakeGrid extends Grid
   constructor: (x=10, y=10) ->
     @locations = []
     for x in [0..x]
@@ -32,3 +33,5 @@ class FakeGrid
 
 #      beforeEach ->
 #        pf = new Playfield grid, FakePlayfieldLocation
+
+  null
