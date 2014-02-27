@@ -1,8 +1,7 @@
 class Grid
-  constructor: (@width, @height, @config) ->
+  constructor: (name, @width, @height, @config, @labels) ->
+    @className = name + 'Grid'
     @locations = {}
-    @labels = []
-
 
   add: (location) ->
     @locations[location.id] = location
@@ -23,12 +22,22 @@ class Grid
 
 
   getLocation: (point) ->
+    ###
+    Returns a hex at a given point
+    @this {Grid}
+    @return {Location}
+    ###
+    point = @resolve(point)
     for h of @locations
       return @locations[h]  if @locations[h].contains(point)
     null
 
-
   getLocations: (points) ->
+    ###
+    Turn a list of points into a list of LOCATIONS
+    @param points {Array} a list points
+    @return {Array} of Locations
+    ###
     locations = []
 
     for point in points
@@ -50,6 +59,6 @@ class Grid
     @labels.indexOf(direction);
 
   resolve: (point) ->
-    throw 'Not Implemented'
+    point
 
-module.exports = Grid
+if module then module.exports = Grid

@@ -1,4 +1,4 @@
-Worm = require('../../../build/scripts/game/classes/Worm.js')
+Worm = require('../../../build/scripts/game/classes/Worm')
 
 describe 'Worm', ->
   w = null

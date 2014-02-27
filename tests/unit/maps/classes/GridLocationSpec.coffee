@@ -1,4 +1,4 @@
-GridLocation = require('../../../../build/scripts/maps/classes/GridLocation.js')
+GridLocation = require('../../../../build/scripts/maps/classes/GridLocation')
 
 describe 'GridLocation', ->
 
