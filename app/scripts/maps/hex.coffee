@@ -115,26 +115,6 @@ angular.module('hextools', ['autoworms.services']).service 'hexService', (logger
   # Objects
   # ------------------------
 
-  ###
-  A Point is simply x and y coordinates
-  @constructor
-  ###
-  class Point
-    constructor: (@x, @y) ->
-
-  ###
-  A Rectangle is x and y origin and width and height
-  @constructor
-  ###
-  class Rectangle
-    constructor: (@x, @y, @width, @height) ->
-
-  ###
-  A Line is x and y start and x and y end
-  @constructor
-  ###
-  class Line
-    constructor: (@x1, @y1, @x2, @y2) ->
 
   ###
   A Hexagon is a 6 sided polygon, our hexes don't have to be symmetrical, i.e. ratio of width to height could be 4 to 3

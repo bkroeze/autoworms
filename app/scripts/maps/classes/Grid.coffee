@@ -1,7 +1,11 @@
 class Grid
   constructor: (@width, @height, @config) ->
-    @locations = []
+    @locations = {}
     @labels = []
+
+
+  add: (location) ->
+    @locations[location.id] = location
 
 
   drawLineBetween: (ctx, locA, locB, color='black', width=2) ->
@@ -20,7 +24,7 @@ class Grid
 
   getLocation: (point) ->
     for h of @locations
-      return @locations[h]  if @locations[h].contains(p)
+      return @locations[h]  if @locations[h].contains(point)
     null
 
 
@@ -35,19 +39,15 @@ class Grid
 
 
   indexToLabel: (ix) ->
+    ct = @labels.length
     while ix<0
-      ix += labels.length
+      ix += ct
 
-    ix % labels.length
-
-    labels[ix % labels.length]
+    @labels[ix % ct]
 
 
   labelToIndex: (direction) ->
-    ix = labels.indexOf(direction);
-    if typeof ix == 'undefined'
-      throw new Error('bad direction: ' + direction)
-    ix
+    @labels.indexOf(direction);
 
   resolve: (point) ->
     throw 'Not Implemented'

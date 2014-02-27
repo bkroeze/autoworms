@@ -56,6 +56,7 @@ gulp.task('server', function() {
   app.listen(EXPRESS_PORT);
 });
 
+// for some reason, the built-in "clean" command causes gulp to fail to build the scripts every other time
 gulp.task('clean', function() {
   return gulp.src(paths.build)
     .pipe(spawn({
@@ -100,9 +101,9 @@ gulp.task('templates', function() {
   return gulp.src(paths.templates.src)
     .pipe(
       jade({
-        pretty: true,
+        pretty: !production,
         locals: {
-          debug: true
+          debug: !production
         }
       }))
     .pipe(gulp.dest(paths.templates.dest));

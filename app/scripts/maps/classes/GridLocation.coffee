@@ -5,6 +5,9 @@ class GridLocation
   constructor: (@raw) ->
     @id = @raw.id
 
+  contains: (point) ->
+    throw 'Not Implemented'
+
   getNeighbors: () ->
     return @raw.getNeighbors()
 
