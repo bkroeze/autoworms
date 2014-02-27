@@ -17,3 +17,7 @@ describe 'HexGrid', ->
     p = new Point(5,5)
     loc = hg.getLocation(p)
     expect(loc.id).toEqual('0:0')
+
+  it 'should calculate boundaries', ->
+    expect(hg.colLimits(0)).toEqual([0,3])
+    expect(hg.colLimits(1)).toEqual([1,3])
